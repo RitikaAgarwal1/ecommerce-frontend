@@ -1,0 +1,116 @@
+.form input{
+  border: 1px solid grey;
+  height: 25px;
+  margin: 0 10px 0 10px;
+}
+
+.form{
+  padding: 20px;
+  background: #646565;
+  display: flex;
+  margin-bottom: 2%;
+}
+
+.form div{
+  display: inline;
+  margin: 0 2px 0 2px;
+}
+
+input[type=file]::file-selector-button{
+  background: #c2d44e;
+  border: 1px solid #c2d44e;
+  text-align: center;
+  padding: 6px 15px;
+  color: #fff;
+  cursor: pointer;
+}
+
+form input[type="file"] {
+  border: none;
+  color: #fff;
+  width: 77%;
+  padding: 0px;
+}
+
+form label{
+  color: #fff;
+  font-size: 12px;
+}
+
+::placeholder{
+  padding-left: 5px;
+}
+
+form button{
+  display: inline;
+  margin: auto;
+}
+
+form button:hover{
+  box-shadow: inset 1px 1px 5px 1px #0000001f;
+  background: #adbd41;
+}
+
+.content{
+  border: 2px solid #c2d44e;
+  margin: 0 2% 0 2%;
+  background: #fff;
+  display: flex;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.container{
+  background:#f3f2f7;
+  padding-bottom: 2%;
+}
+
+.content img{
+  box-shadow: 0px 0px 5px 1px #64656552;
+  margin-right: 20px;
+}
+
+.title{
+  font-size: 22px;
+  margin: 0;
+}
+
+.title::first-letter {
+  color: #c2d44e;
+  font-size: 150%;
+}
+
+small{
+  display: block;
+  font-family: 'Raleway', sans-serif;
+}
+
+.advertisement{
+  text-align: center;
+  font-weight: 600;
+  margin:auto;
+}
+
+.advertisement div{
+  display: inline;
+}
+
+.advertisement button{
+  margin: unset;
+  display: inline;
+  margin-right: 5px;
+}
+
+.btns{
+  margin-left: auto;
+  align-self: center;
+}
+
+.btns button{
+  width: 83px;
+  justify-content: center;
+}
+
+.content a{
+  color:#fff;
+}

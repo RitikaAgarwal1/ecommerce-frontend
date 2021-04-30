@@ -1,0 +1,34 @@
+@import url("https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+
+// theme color
+$primary-color: #c2d44e;
+$secondary-color: #646565;
+
+// theme font style
+$primary-font: "Raleway", sans-serif;
+
+// styling starts from here
+body {
+	color: $secondary-color;
+	font-family: $primary-font;
+	margin: 0;
+    
+    h1 {
+        &::first-letter {
+            color: $primary-color;
+            font-size: 150%;
+        }
+        color: $secondary-color;
+    }
+    
+    input {
+        &:focus {
+            outline: none;
+        }
+    }
+
+    main {
+        padding-top: 5.5%;
+    }
+}
+

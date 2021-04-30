@@ -1,0 +1,49 @@
+@import url("https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+
+body{
+  color: #646565;
+  font-family: "Raleway", sans-serif;
+  margin: 0;
+}
+
+h1::first-letter {
+  color: #c2d44e;
+  font-size: 150%;
+}
+
+h1 {
+  color: #646565;
+}
+
+input:focus {
+  outline: none;
+}
+
+main{
+  padding-top: 5.5%;
+}
+
+/* header */
+.fa-user-o, .fa-heart-o, .fa-shopping-basket{
+  display: flex;
+  justify-content: center;
+}
+/* login js */
+button{
+  background: #c2d44e;
+  text-align: center;
+  border: none;
+  padding: 6px 15px;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+}
+
+button:hover{
+  box-shadow: inset 1px 1px 5px 1px #0000001f;
+  background: #adbd41;
+}
+
+footer .fa{
+  width: 20px;
+}
