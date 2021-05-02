@@ -1,0 +1,64 @@
+@import "../../style.scss";
+
+// login
+
+.loginContainer{
+    background: $secondary-color;
+    width: 61%;
+    height: 54vh;
+    margin: auto;
+    margin-top: 23%;
+    padding: 15px;
+
+    .border{
+        border: 1px solid;
+        height: 54vh;
+
+        p{
+            position: relative;
+
+            .letter{
+                color: $primary-color;
+                font-family: $primary-font;
+                font-size: 58ex;
+                position: absolute;
+                top:-44px;
+            }
+            .logintext{
+                color: #fff;
+                font-size: 40px;
+                position: relative;
+                top: 80px;
+                left: 96px;
+            }
+        }
+    }
+}
+
+button{
+    margin: auto;
+    margin-top: 10px;
+}
+
+//loginSection
+
+section.login{
+    display: flex;
+    height: 784px;
+    padding: 0 1% 0 1%;
+
+    .image{
+        width:50%;
+    }
+
+    .loginbg{
+        background: url('https://bridge214.qodeinteractive.com/wp-content/uploads/2018/04/home-single-image-4.jpg');
+        background-size: cover;
+        background-repeat: no-repeat;
+        width:50%;
+    }
+}
+
+section.banner{
+    margin-top: 10px;
+}

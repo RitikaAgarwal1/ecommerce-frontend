@@ -1,0 +1,110 @@
+@import "../../style.scss";
+
+input[type=file] {
+    &::file-selector-button {
+        background: $primary-color;
+        border: 1px solid $primary-color;
+        text-align: center;
+        padding: 6px 15px;
+        color: #fff;
+        cursor: pointer;
+    }
+}
+
+.container {
+	background: #f3f2f7;
+	padding-bottom: 2%;
+
+    &::placeholder {
+        padding-left: 5px;
+    }
+    .advertisement{
+        text-align: center;
+        font-weight: 600;
+        margin: auto;
+
+        div {
+            display: inline;
+        }
+
+        button {
+            margin: unset;
+            display: inline;
+            margin-right: 5px;
+        }
+    }
+    
+    
+    form.form {
+        padding: 20px;
+        background: $secondary-color;
+        display: flex;
+        margin-bottom: 2%;
+    
+        input {
+            border: 1px solid grey;
+            height: 25px;
+            margin: 0 10px 0 10px;
+        }
+    
+        div {
+            display: inline;
+            margin: 0 2px 0 2px;
+        }
+    
+        input[type=file] {
+            border: none;
+            color: #fff;
+            width: 77%;
+            padding: 0px;
+        }
+    
+        label {
+            color: #fff;
+            font-size: 12px;
+        }
+    
+        button {
+            display: inline;
+            margin: auto;
+        }
+    }
+
+    .content {
+        border: 2px solid $primary-color;
+        margin: 0 2% 0 2%;
+        background: #fff;
+        display: flex;
+        padding: 10px;
+        margin-top: 10px;
+        img {
+            box-shadow: 0px 0px 5px 1px #64656552;
+            margin-right: 20px;
+        }
+        a {
+            color: #fff;
+        }
+
+        .title {
+            font-size: 22px;
+            margin: 0;
+            &::first-letter {
+                color: $primary-color;
+                font-size: 150%;
+            }
+        }
+
+        small {
+            display: block;
+        }
+
+        .btns {
+            margin-left: auto;
+            align-self: center;
+            button {
+                width: 83px;
+                justify-content: center;
+            }
+        }
+    }
+}

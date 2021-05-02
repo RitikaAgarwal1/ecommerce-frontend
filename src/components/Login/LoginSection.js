@@ -1,11 +1,16 @@
 import React from "react";
 import { Fragment } from "react";
-import classes from "./LoginSection.module.css";
+import classes from "./LoginSection.module.scss";
 import Login from "./Login";
+import configData from "../../config/config.json";
 
 const LoginSection = props => {
 
-  const bannerUrl = localStorage.getItem("banner");
+  const Banner = () => (
+    <section className={classes.banner}>
+      <img src={`${configData.BASEURL}bannerDetails`} id="banner" height="413px" width="100%" />
+    </section>
+  )
 
   return (
     <Fragment>
@@ -19,11 +24,9 @@ const LoginSection = props => {
       </section>
 
       {(() => {
-        if (bannerUrl) {
+        if (`${configData.BASEURL}bannerDetails`) {
           return (
-            <section className={classes.banner} bannerUrl={bannerUrl}>
-              <img src={bannerUrl} id="banner" height="413px" width="100%" />
-            </section>
+            <Banner/>
           )
         }
       })()}

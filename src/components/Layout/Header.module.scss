@@ -1,0 +1,131 @@
+@import "../../style.scss";
+
+//header
+
+a{
+    text-decoration: none;
+    color:$secondary-color;
+}
+
+header {
+    display: flex;
+	justify-content: space-between;
+	position: fixed;
+	background: #fff;
+	width: 100%;
+	z-index: 1;
+	margin-top: -0.5%;
+
+    p{
+        font-variant-caps: small-caps;
+        font-weight: 600;
+    }
+
+	ul {
+		color: $secondary-color;
+		padding: 15px;
+		display: inline-flex;
+		font-weight: 600;
+		align-self: center;
+		background: $primary-color;
+		font-variant-caps: small-caps;
+
+        li {
+            list-style: none;
+            cursor: pointer;
+            padding: 0 10px 0 10px;
+            position: relative;
+            input {
+                border: none;
+                padding: 2px;
+            }
+            .addon {
+                background: #fff;
+                padding: 1px 2px 1px 2px;
+            }
+            &::placeholder {
+                font-size: 11px;
+            }
+            .icons {
+                font-size: 20px;
+            }
+            &:hover {
+                color: #fff;
+                .addon {
+                    color: $secondary-color;
+                }
+            }
+            a {
+                color: $secondary-color;
+
+                .badge {
+                    width: 20px;
+                    height: 20px;
+                    background: #fff;
+                    display: block;
+                    position: absolute;
+                    top: -11px;
+                    border-radius: 100%;
+                    right: 1px;
+                    color: #ff8080;
+                    font-size: 14px;
+                    text-align: center;
+                }
+
+                &:hover, .active{
+                    color: #fff;
+                }
+            }
+        }
+	}
+	h1 {
+		margin-left: 1%;
+	}
+	div {
+		align-self: center;
+	}
+	p {
+		display: inline;
+		cursor: pointer;
+		padding-right: 10px;
+
+        a {
+            &:hover {
+                color: $primary-color;
+                text-decoration: underline;
+            }
+        }
+	}
+}
+
+//footer
+
+footer{
+    background: $secondary-color;
+
+    .content{
+		padding: 2%;
+		display: flex;
+		justify-content: space-between;
+
+        p{
+            color: #fff;
+            margin: 0;
+        }
+    
+        ul{
+            margin-bottom: 0;
+            padding: 0;
+            
+            li{
+                padding: 2px 0;
+                color: #fff;
+                list-style-type: none;
+    
+                a{
+                    color: #fff;
+                }
+            }
+        }
+    }
+}

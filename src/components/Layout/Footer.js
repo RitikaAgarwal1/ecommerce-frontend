@@ -1,6 +1,6 @@
 import React from "react";
 import { Fragment } from "react";
-import classes from "./Header.module.css";
+import classes from "./Header.module.scss";
 import ReactTooltip from "react-tooltip";
 import { NavLink } from "react-router-dom";
 

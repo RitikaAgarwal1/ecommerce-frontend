@@ -1,6 +1,6 @@
 import React from "react";
 import { Fragment } from "react";
-import classes from "./LoginSection.module.css";
+import classes from "./LoginSection.module.scss";
 
 const Login = props => {
   return (

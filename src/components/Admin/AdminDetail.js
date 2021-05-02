@@ -1,6 +1,6 @@
 import React from "react";
 import Input from "../../UI/Input";
-import classes from './Admin.module.css';
+import classes from './Admin.module.scss';
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 

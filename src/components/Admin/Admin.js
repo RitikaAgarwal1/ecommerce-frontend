@@ -1,81 +1,141 @@
 import React, { useState } from "react";
 import Input from "../../UI/Input";
-import classes from "./Admin.module.css";
+import classes from "./Admin.module.scss";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import configData from "../../config/config.json";
+import { getBanner, deleteAdBanner } from "../../services/promotionService"
 
 const Admin = props => {
 
   const { addToast } = useToasts();
+  const [uploadPercentage, setUploadPercentage] = useState(0);
 
-  let banner;
+  let banner = "";
+  let isBannerAvailable = null;
 
   const changeitem = (e) => {
     !banner ? banner = e.target.files[0] : banner = "";
     if (banner) {
       banner.type == "image/png" || banner.type == "image/jpeg" ? banner = e.target.files[0] : banner = "";
+      getBannerDetails();
     }
     console.log(banner);
   }
 
-  const getBanner = async () => {
+  const getBannerDetails = async () => {
     try {
-      const info = {
-        method: "get",
-        url: `${configData.BASEURL}bannerDetails`
+      getBanner().then(data => {
+        console.log(data);
+        if (data.message) {
+          isBannerAvailable = data.message;
+          console.log(isBannerAvailable);
+        }
+        return data;
+      });
+    }
+    catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const uploadBanner = () => {
+  //   let data = new FormData();
+  //   data.append("file", banner);
+
+  //   const option = {
+  //     onUploadProgress: ProgressEvent => {
+  //       const {loaded, total} = ProgressEvent;
+  //       let percent = Math.floor((loaded * 100) / total);
+
+  //       if (percent < 100){
+  //         setUploadPercentage(percent);
+  //       }
+  //     }
+  //   };
+  //   axios.post(`${configData.BASEURL}addBanner`, data, option).then(res => {
+  //     console.log('res of upload', res);
+  //     setUploadPercentage(100);
+
+  //   }).catch(err => {
+  //     console.log(err);
+  //     setUploadPercentage(0);
+  //   })
+  // }
+
+  const uploadBanner = async () => {
+    try {
+      if (banner) {
+        if (isBannerAvailable) {
+          let data = new FormData();
+          data.append("file", banner);
+          const option = {
+            onUploadProgress: ProgressEvent => {
+              const { loaded, total } = ProgressEvent;
+              let percent = Math.floor((loaded * 100) / total);
+
+              if (percent < 100) {
+                setUploadPercentage(percent);
+              }
+            }
+          };
+          axios.post(`${configData.BASEURL}addBanner`, data, option).then(res => {
+            console.log('res of upload', res);
+            setUploadPercentage(100);
+
+          }).catch(err => {
+            console.log(err);
+            setUploadPercentage(0);
+          });
+          addToast("Advertisement successfully added to the Landing Page!", {
+            appearance: 'success',
+            autoDismiss: true,
+            placement: "bottom-center"
+          });
+        } else {
+          addToast("Please delete existing image first!", {
+            appearance: 'error',
+            autoDismiss: true,
+            placement: "bottom-center"
+          });
+        }
+      } else if (!banner || banner == undefined) {
+        addToast("Please select a valid file type", {
+          appearance: 'error',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
       }
+    } catch (err) {
+      console.log(err);
+      setUploadPercentage(0);
+    }
+  }
 
-      let response = await axios(info);
-      console.log(response);
-
+  const deleteBanner = async () => {
+    try {
+      deleteAdBanner().then(data => {
+        console.log(data);
+        if (data.message === "There is no image for deleting!") {
+          addToast(data.message, {
+            appearance: 'info',
+            autoDismiss: true,
+            placement: "bottom-center"
+          });
+        } else if (data.message === "Banner successfully deleted!") {
+          addToast(data.message, {
+            appearance: 'success',
+            autoDismiss: true,
+            placement: "bottom-center"
+          });
+        }
+        return data;
+      });
     } catch (error) {
       console.log(error);
     }
-
-  };
-
-  const uploadBanner = () => {
-    getBanner();
-    // if (banner) {
-    //   if (!localStorage.getItem("banner")) {
-    //     const reader = new FileReader();
-    //     reader.addEventListener("load", () => {
-    //       localStorage.setItem("banner", reader.result);
-    //     });
-    //     reader.readAsDataURL(banner);
-    //     addToast("Advertisement successfully added to the Landing Page!", {
-    //       appearance: 'success',
-    //       autoDismiss: true,
-    //       placement:"bottom-center"
-    //     });
-    //   } else {
-    //     addToast("Please delete existing image first!", {
-    //       appearance: 'error',
-    //       autoDismiss: true,
-    //       placement:"bottom-center"
-    //     });
-    //   }
-    // } else if (!banner || banner == undefined) {
-    //   addToast("Please select a valid file type", {
-    //     appearance: 'error',
-    //     autoDismiss: true,
-    //     placement:"bottom-center"
-    //   });
-    // }
-
-
-  }
-
-  const deleteBanner = () => {
-    localStorage.removeItem("banner");
-    addToast("Advertisement successfully deleted!", {
-      appearance: 'success',
-      autoDismiss: true,
-      placement: "bottom-center"
-    });
   }
 
   return (
@@ -141,6 +201,7 @@ const Admin = props => {
 
           <button onClick={uploadBanner}>Upload</button>
           <button onClick={deleteBanner}>Delete</button>
+          {uploadPercentage}
 
         </div>
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { Fragment } from "react";
-import classes from "./Header.module.css";
+import classes from "./Header.module.scss";
 import ReactTooltip from "react-tooltip";
 import { NavLink } from "react-router-dom";
 
@@ -8,7 +8,7 @@ const Header = props => {
   return (
     <Fragment>
       <header>
-        <h1><NavLink to="/">Ecommerce</NavLink></h1>
+        <h1><NavLink to="/ecommerce-frontend">Ecommerce</NavLink></h1>
 
       <div>
       <p><NavLink to="/admin">Admin</NavLink></p>

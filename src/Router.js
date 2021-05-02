@@ -10,15 +10,15 @@ import Designer from "./components/Designer/Designer";
 import Profile from "./components/Profile/Profile";
 import Wishlist from "./components/Wishlist/Wishlist";
 import LoginSection from "./components/Login/LoginSection";
-import "./style.css";
-import "./fonts/Raleway_200.css";
-import "./fonts/Raleway_300.css";
+import "./style.scss";
+import "./fonts/Raleway_200.scss";
+import "./fonts/Raleway_300.scss";
 
 const Router = () => {
   return (
    <Route>
     <Switch>
-      <Route exact path="/">
+      <Route exact path="/ecommerce-frontend">
         <LoginSection />
       </Route>
 

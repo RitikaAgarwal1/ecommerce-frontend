@@ -1,11 +1,36 @@
 @import url("https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css");
+@import "./fonts/Raleway_200.scss";
+@import "./fonts/Raleway_300.scss";
 
 // theme color
 $primary-color: #c2d44e;
 $secondary-color: #646565;
+$hover-color: #adbd41;
 
 // theme font style
 $primary-font: "Raleway", sans-serif;
+
+//button
+@mixin btn-theme {
+    background: $primary-color;
+    text-align: center;
+    border: none;
+    padding: 6px 15px;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    &:hover {
+        box-shadow: inset 1px 1px 5px 1px #0000001f;
+        background: $hover-color;
+    }
+    &:active {
+        box-shadow: inset 1px 1px 5px 1px #0000001f;
+    }
+}
+
+p, ul, ::placeholder{
+    @include rale_300;
+}
 
 // styling starts from here
 body {
@@ -14,11 +39,16 @@ body {
 	margin: 0;
     
     h1 {
+        @include rale_200;
         &::first-letter {
             color: $primary-color;
             font-size: 150%;
         }
         color: $secondary-color;
+    }
+
+    button{
+        @include btn-theme;
     }
     
     input {
@@ -29,6 +59,19 @@ body {
 
     main {
         padding-top: 5.5%;
+    }
+
+    /* header */
+    .fa-user-o, .fa-heart-o, .fa-shopping-basket{
+        display: flex;
+        justify-content: center;
+    }
+
+    // footer
+    footer {
+        .fa {
+            width: 20px;
+        }
     }
 }
 

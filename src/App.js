@@ -3,9 +3,9 @@ import {Fragment} from 'react';
 import Header from "./components/Layout/Header";
 import Footer from "./components/Layout/Footer";
 import Router from "./Router";
-import "./style.css";
-import "./fonts/Raleway_200.css";
-import "./fonts/Raleway_300.css";
+import "./style.scss";
+import "./fonts/Raleway_200.scss";
+import "./fonts/Raleway_300.scss";
 import { ToastProvider } from 'react-toast-notifications';
 
 
