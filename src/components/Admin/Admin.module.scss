@@ -11,6 +11,14 @@ input[type=file] {
     }
 }
 
+.CircularProgressbar{
+    width: 2% impo !important;
+}
+
+.CircularProgressbar .CircularProgressbar-text{
+    font-size: 32px;
+}
+
 .container {
 	background: #f3f2f7;
 	padding-bottom: 2%;

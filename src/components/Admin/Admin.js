@@ -6,7 +6,9 @@ import { Link } from "react-router-dom";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import configData from "../../config/config.json";
-import { getBanner, deleteAdBanner } from "../../services/promotionService"
+import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
+import { CircularProgressbar } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 const Admin = props => {
 
@@ -201,7 +203,8 @@ const Admin = props => {
 
           <button onClick={uploadBanner}>Upload</button>
           <button onClick={deleteBanner}>Delete</button>
-          {uploadPercentage}
+
+          {/* <CircularProgressbar value={uploadPercentage} text={`${uploadPercentage}%`} /> */}
 
         </div>
 
