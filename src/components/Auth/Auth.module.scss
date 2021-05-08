@@ -1,0 +1,36 @@
+@import "../../style.scss";
+
+form{
+    margin: 0;
+    .lower{
+        text-transform: lowercase;
+    }
+
+    div {
+        padding: 5px 0;
+
+        label {
+            width: 39%;
+            display: inline-flex;
+        }
+        
+        input {
+            width: 60%;
+            height: 5vh;
+            border-radius: 5px;
+            border: 1px solid #80808063;
+        }
+    }
+}
+
+.btn{
+    text-align: center;
+    margin-top: 10px;
+
+    button{
+        padding: 6px 30px;
+        margin:unset;
+        display: inline;
+        margin: 0 10px;
+    }  
+}

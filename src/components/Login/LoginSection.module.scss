@@ -30,6 +30,13 @@
                 position: relative;
                 top: 80px;
                 left: 96px;
+
+                .authBtn{
+                    cursor: pointer;
+                    &:hover{
+                        color :$primary-color;
+                    }
+                }
             }
         }
     }
