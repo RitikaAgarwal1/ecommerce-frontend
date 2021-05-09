@@ -1,99 +1,210 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import Input from "../../UI/Input";
 import { Fragment } from "react";
 import Modal from "../../UI/Modal";
 import classes from "./Auth.module.scss";
+import { useToasts } from 'react-toast-notifications';
+import { login } from "../../services/authService";
 
 const Auth = props => {
-    console.log('auth', props.modalContent);
+    const { addToast } = useToasts();
+    const [isAdmin, setIsAdmin] = useState('');
 
-    const authUser = (event) => {
+    const isEmpty = (value) => value.trim() === '';
+    const isPhone = (value) => value.trim().length === 10;
+    const isEmail = (value) => /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(value);
+
+    const emailRef = useRef();
+    const passRef = useRef();
+    const fnameRef = useRef();
+    const lnameRef = useRef();
+    const addressRef = useRef();
+    const phoneRef = useRef();
+    const cnameRef = useRef();
+    const roleRef = useRef();
+
+    const authUser = async (event) => {
         event.preventDefault();
-        console.log();
+        if (props.modalContent !== "REGISTER") {
+            const signIn = {
+                email: emailRef.current.value,
+                password: passRef.current.value
+            }
+
+            if (isEmpty(signIn.email && signIn.password) || !isEmail(signIn.email)) {
+                addToast("Email id or password is either empty or not valid!", {
+                    appearance: 'error',
+                    autoDismiss: true,
+                    placement: "bottom-center"
+                });
+            } else {
+                let err = "";
+                try {
+                    const response = await login(signIn);
+                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('userDetails', JSON.stringify(response.user));
+                } catch (error) {
+                    console.log(error);
+                    err = error;
+                }
+
+                addToast(err? err.response.data.Error: "You are now successfully logged in", {
+                    appearance: err ? 'error' : 'success',
+                    autoDismiss: true,
+                    placement: "bottom-center"
+                });
+                if (!err) {
+                    localStorage.setItem('login', true);
+                    window.location.reload();
+                    setTimeout(() => {
+                        props.onClose();
+                    }, 1000);
+                }
+
+            }
+        } else if (props.modalContent === "REGISTER") {
+            const register = {
+                first_name: fnameRef.current.value,
+                last_name: lnameRef.current.value,
+                email: emailRef.current.value,
+                password: passRef.current.value,
+                phone: phoneRef.current.value,
+                address: addressRef.current.value,
+                user_role: roleRef.current.value,
+                company_name: cnameRef.current ? cnameRef.current.value : ''
+            }
+
+            if (isEmpty(register.email && register.password && register.first_name && register.last_name && register.phone && register.address && register.user_role) || !isPhone(register.phone) || !isEmail(register.email)) {
+                addToast("Data is not properly filled up!", {
+                    appearance: 'error',
+                    autoDismiss: true,
+                    placement: "bottom-center"
+                });
+            } else if (isAdmin == 'ADMIN' && isEmpty(register.email && register.password && register.first_name && register.last_name && register.phone && register.address && register.user_role && register.company_name) || !isPhone(register.phone) || !isEmail(register.email)) {
+                addToast("Data is not properly filled up!", {
+                    appearance: 'error',
+                    autoDismiss: true,
+                    placement: "bottom-center"
+                });
+                //}
+            } else {
+                addToast("You are successfully registered as " + (register.user_role).toLowerCase(), {
+                    appearance: 'success',
+                    autoDismiss: true,
+                    placement: "bottom-center"
+                });
+                setTimeout(() => {
+                    props.onClose();
+                }, 1000);
+            }
+        }
     };
 
     return (
         <Modal>
             {props.modalContent === 'REGISTER' &&
-                <form onSubmit={(event) => authUser}>
+                <form className={classes.authForm}>
                     <h1>Register</h1>
                     <Input
                         label="First Name"
                         input={{
-                        type: "text"
+                            type: "text",
+                            ref: fnameRef
                         }}
                     />
                     <Input
                         label="Last Name"
                         input={{
-                        type: "text"
+                            type: "text",
+                            ref: lnameRef
                         }}
                     />
                     <Input
                         label="Email Address"
                         input={{
-                        type: "email"
+                            type: "email",
+                            ref: emailRef
                         }}
                     />
                     <Input
                         label="Password"
                         input={{
-                        type: "password"
+                            type: "password",
+                            ref: passRef
                         }}
                     />
                     <Input
                         label="Phone Number"
                         input={{
-                        type: "number",
-                        placeholder: "+91",
-                        max: "10",
-                        min: "9"
+                            type: "number",
+                            placeholder: "+91",
+                            ref: phoneRef
                         }}
                     />
                     <Input
                         label="Address"
                         input={{
-                        type: "text"
+                            type: "text",
+                            ref: addressRef
                         }}
                     />
-                    <Input
-                        label="Registered Company Name"
-                        input={{
-                        type: "text"
-                        }}
-                    />
+
+                    <div>
+                        <label>Register As</label>
+                        <select name="register.user_role" ref={roleRef} onChange={(event) => {
+                            const selectedRole = event.target.value;
+                            setIsAdmin(selectedRole)
+                        }} setIsAdmin={roleRef}>
+                            <option value="USER">User</option>
+                            <option value="ADMIN">Admin</option>
+                        </select>
+                    </div>
+
+                    {isAdmin === 'ADMIN' &&
+                        <Input
+                            label="Registered Company Name"
+                            input={{
+                                type: "text",
+                                ref: cnameRef
+                            }}
+                        />
+                    }
+
                     <div className={classes.btn}>
                         <button onClick={props.onClose}>Cancel</button>
-                        <button>Submit</button>
+                        <button onClick={authUser}>Submit</button>
                     </div>
                 </form>
             }
 
             {/* for sigin in */}
 
-            {props.modalContent !== 'REGISTER' &&
-                <form onSubmit={authUser}>
+            {
+                props.modalContent !== 'REGISTER' &&
+                <form className={classes.authForm}>
                     <h1>Sign in as <span className={classes.lower}>{props.modalContent}</span></h1>
                     <Input
                         label="Email Address"
                         input={{
-                        type: "email"
+                            type: "email",
+                            ref: emailRef
                         }}
                     />
                     <Input
                         label="Password"
                         input={{
-                        type: "password"
+                            type: "password",
+                            ref: passRef
                         }}
                     />
                     <div className={classes.btn}>
                         <button onClick={props.onClose}>Cancel</button>
-                        <button>Sign in</button>
+                        <button onClick={authUser} >Sign in</button>
                     </div>
                 </form>
             }
 
-        </Modal>
+        </Modal >
     )
 
 }

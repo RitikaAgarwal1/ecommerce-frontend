@@ -1,6 +1,6 @@
 @import "../../style.scss";
 
-form{
+.authForm{
     margin: 0;
     .lower{
         text-transform: lowercase;
@@ -14,11 +14,14 @@ form{
             display: inline-flex;
         }
         
-        input {
+        input, select {
             width: 60%;
             height: 5vh;
             border-radius: 5px;
             border: 1px solid #80808063;
+        }
+        select{
+            outline: none;
         }
     }
 }

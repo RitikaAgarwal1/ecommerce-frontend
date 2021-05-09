@@ -13,6 +13,10 @@ const LoginSection = props => {
     getBannerDetails();
   });
 
+  const isLogin = (status) => {
+    console.log(status);
+  };
+
   const getBannerDetails = async () => {
     try {
       getBanner().then(data => {
@@ -28,14 +32,12 @@ const LoginSection = props => {
 
   return (
     <Fragment>
-      {promotion}
-
       <section className={classes.login}>
         <div className={classes.image}>
           <img src="https://bridge214.qodeinteractive.com/wp-content/uploads/2018/04/home-slider-1.jpg" width="100%" height="784px" />
         </div>
         <div className={classes.loginbg}>
-          <Login></Login>
+          <Login status={isLogin}></Login>
         </div>
       </section>
 

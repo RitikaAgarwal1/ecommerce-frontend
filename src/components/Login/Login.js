@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Fragment } from "react";
 import classes from "./LoginSection.module.scss";
 import Auth from "../Auth/Auth";
@@ -6,6 +6,12 @@ import Auth from "../Auth/Auth";
 const Login = props => {
 const [authIsShown, setAuthIsShown] = useState(false);
 const [modalContent, setModalContent] = useState('');
+const [isLoginStatus, setIsLogin] = useState(false);
+
+useEffect(() => {
+  const loginTrue = localStorage.getItem('login')? true: false;
+  setIsLogin(loginTrue);
+});
 
 const showAuthHandler = (modalContent) => {
   setAuthIsShown(true);
@@ -20,6 +26,9 @@ const hideAuthHandler = () => {
   return (
     <Fragment>
       {authIsShown && <Auth onClose={hideAuthHandler} modalContent={modalContent}/>}
+
+      {!isLoginStatus && 
+        <Fragment>
       <div className={classes.loginContainer}>
         <div className={classes.border}>
           <p>
@@ -34,8 +43,9 @@ const hideAuthHandler = () => {
           </p>
         </div>
       </div>
-
       <button onClick={(event) => showAuthHandler('REGISTER')}>Register</button>
+      </Fragment>
+      }
     </Fragment>
   );
 };
