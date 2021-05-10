@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import Modal from "../../UI/Modal";
 import classes from "./Auth.module.scss";
 import { useToasts } from 'react-toast-notifications';
-import { login } from "../../services/authService";
+import { login, registration } from "../../services/authService";
 
 const Auth = props => {
     const { addToast } = useToasts();
@@ -39,21 +39,34 @@ const Auth = props => {
                 });
             } else {
                 let err = "";
+                let response;
                 try {
-                    const response = await login(signIn);
-                    localStorage.setItem('token', response.token);
-                    localStorage.setItem('userDetails', JSON.stringify(response.user));
+                    response = await login(signIn);
+                    if (response.user.user_role != props.modalContent) {
+                        addToast('You are not registered as ' + props.modalContent.toLowerCase() + ' . Please signin as valid role.', {
+                            appearance: 'error',
+                            autoDismiss: true,
+                            placement: "bottom-center"
+                        });
+                        setTimeout(() => {
+                            props.onClose();
+                        }, 1000);
+                        return false;
+                    }
+
                 } catch (error) {
                     console.log(error);
                     err = error;
                 }
-
-                addToast(err? err.response.data.Error: "You are now successfully logged in", {
+                addToast(err ? err.response.data.Error : "You are now successfully logged in", {
                     appearance: err ? 'error' : 'success',
                     autoDismiss: true,
                     placement: "bottom-center"
                 });
+
                 if (!err) {
+                    localStorage.setItem('token', response.token);
+                    localStorage.setItem('userDetails', JSON.stringify(response.user));
                     localStorage.setItem('login', true);
                     window.location.reload();
                     setTimeout(() => {
@@ -67,27 +80,28 @@ const Auth = props => {
                 first_name: fnameRef.current.value,
                 last_name: lnameRef.current.value,
                 email: emailRef.current.value,
-                password: passRef.current.value,
+                pwd: passRef.current.value,
                 phone: phoneRef.current.value,
                 address: addressRef.current.value,
                 user_role: roleRef.current.value,
                 company_name: cnameRef.current ? cnameRef.current.value : ''
             }
 
-            if (isEmpty(register.email && register.password && register.first_name && register.last_name && register.phone && register.address && register.user_role) || !isPhone(register.phone) || !isEmail(register.email)) {
+            if (isEmpty(register.email && register.pwd && register.first_name && register.last_name && register.phone && register.address && register.user_role) || !isPhone(register.phone) || !isEmail(register.email)) {
                 addToast("Data is not properly filled up!", {
                     appearance: 'error',
                     autoDismiss: true,
                     placement: "bottom-center"
                 });
-            } else if (isAdmin == 'ADMIN' && isEmpty(register.email && register.password && register.first_name && register.last_name && register.phone && register.address && register.user_role && register.company_name) || !isPhone(register.phone) || !isEmail(register.email)) {
+            } else if (isAdmin == 'ADMIN' && isEmpty(register.email && register.pwd && register.first_name && register.last_name && register.phone && register.address && register.user_role && register.company_name) || !isPhone(register.phone) || !isEmail(register.email)) {
                 addToast("Data is not properly filled up!", {
                     appearance: 'error',
                     autoDismiss: true,
                     placement: "bottom-center"
                 });
-                //}
             } else {
+                const response = await registration(register);
+                console.log(response);
                 addToast("You are successfully registered as " + (register.user_role).toLowerCase(), {
                     appearance: 'success',
                     autoDismiss: true,
@@ -154,7 +168,7 @@ const Auth = props => {
                         <select name="register.user_role" ref={roleRef} onChange={(event) => {
                             const selectedRole = event.target.value;
                             setIsAdmin(selectedRole)
-                        }} setIsAdmin={roleRef}>
+                        }}>
                             <option value="USER">User</option>
                             <option value="ADMIN">Admin</option>
                         </select>

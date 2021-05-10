@@ -39,3 +39,23 @@ export const logout = async (body) => {
         }
     });
 };
+
+export const registration = async (body) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            console.log(body);
+            const info = {
+                method: "post",
+                url: `${configData.BASEURL}register`,
+                data: body
+            }
+            let response = await axios(info);
+            //console.log(response);
+            resolve(response.data);
+
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+};

@@ -8,10 +8,14 @@ import { logout } from "../../services/authService";
 const Header = props => {
 
   const [isLogin, setIsLogin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    const loginTrue = localStorage.getItem('login')? true: false;
-    setIsLogin(loginTrue);
+    setIsLogin(localStorage.getItem('login') ? true : false);
+    const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+    const adminTrue = isLogin? JSON.parse(localStorage.getItem('userDetails')).user_role : 'USER';
+    setIsAdmin(adminTrue);
+    console.log(adminTrue);
   });
 
   const signout = async () => {
@@ -33,7 +37,10 @@ const Header = props => {
         <h1><NavLink to="/ecommerce-frontend">Ecommerce</NavLink></h1>
 
         <div>
-          <p><NavLink to="/admin">Admin</NavLink></p>
+          {isAdmin == 'ADMIN' &&
+            <p><NavLink to="/admin">Admin</NavLink></p>
+          }
+
           <ul>
             <li><NavLink activeClassName={classes.active} to="/products">Products</NavLink></li>
             <li><NavLink activeClassName={classes.active} to="/orders">My Orders</NavLink></li>
