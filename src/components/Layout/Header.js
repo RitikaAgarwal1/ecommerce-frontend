@@ -12,7 +12,6 @@ const Header = props => {
 
   useEffect(() => {
     setIsLogin(localStorage.getItem('login') ? true : false);
-    const userDetails = JSON.parse(localStorage.getItem('userDetails'));
     const adminTrue = isLogin? JSON.parse(localStorage.getItem('userDetails')).user_role : 'USER';
     setIsAdmin(adminTrue);
     console.log(adminTrue);

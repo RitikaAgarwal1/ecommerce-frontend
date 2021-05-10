@@ -5,10 +5,13 @@ import Modal from "../../UI/Modal";
 import classes from "./Auth.module.scss";
 import { useToasts } from 'react-toast-notifications';
 import { login, registration } from "../../services/authService";
+import axios from 'axios';
+import configData from "../../config/config.json";
 
 const Auth = props => {
     const { addToast } = useToasts();
     const [isAdmin, setIsAdmin] = useState('');
+    let data = new FormData();
 
     const isEmpty = (value) => value.trim() === '';
     const isPhone = (value) => value.trim().length === 10;
@@ -68,9 +71,9 @@ const Auth = props => {
                     localStorage.setItem('token', response.token);
                     localStorage.setItem('userDetails', JSON.stringify(response.user));
                     localStorage.setItem('login', true);
-                    window.location.reload();
                     setTimeout(() => {
                         props.onClose();
+                        window.location.reload();
                     }, 1000);
                 }
 
@@ -87,6 +90,15 @@ const Auth = props => {
                 company_name: cnameRef.current ? cnameRef.current.value : ''
             }
 
+            data.append("first_name", register.first_name);
+            data.append("last_name", register.last_name);
+            data.append("email", register.email);
+            data.append("pwd", register.pwd);
+            data.append("phone", register.phone);
+            data.append("address", register.address);
+            data.append("user_role", 'ADMIN');
+            data.append("company_name", register.company_name);
+
             if (isEmpty(register.email && register.pwd && register.first_name && register.last_name && register.phone && register.address && register.user_role) || !isPhone(register.phone) || !isEmail(register.email)) {
                 addToast("Data is not properly filled up!", {
                     appearance: 'error',
@@ -100,16 +112,25 @@ const Auth = props => {
                     placement: "bottom-center"
                 });
             } else {
-                const response = await registration(register);
-                console.log(response);
-                addToast("You are successfully registered as " + (register.user_role).toLowerCase(), {
-                    appearance: 'success',
-                    autoDismiss: true,
-                    placement: "bottom-center"
-                });
-                setTimeout(() => {
-                    props.onClose();
-                }, 1000);
+                await axios.post(`${configData.BASEURL}register`, data).then(res => {
+                    addToast("You are successfully registered as " + (register.user_role).toLowerCase(), {
+                        appearance: 'success',
+                        autoDismiss: true,
+                        placement: "bottom-center"
+                    });
+
+                    setTimeout(() => {
+                        props.onClose();
+                    }, 1000);
+            
+                  }).catch(err => {
+                    console.log(err.response);
+                    addToast(err.response.data.Error, {
+                      appearance: 'error',
+                      autoDismiss: true,
+                      placement: "bottom-center"
+                    });
+                  });
             }
         }
     };

@@ -41,16 +41,15 @@ export const logout = async (body) => {
 };
 
 export const registration = async (body) => {
+    console.log(body);
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(body);
             const info = {
                 method: "post",
-                url: `${configData.BASEURL}register`,
-                data: body
+                url: `${configData.BASEURL}register`
             }
-            let response = await axios(info);
-            //console.log(response);
+            let response = await axios(info, body);
+            console.log(response.data);
             resolve(response.data);
 
         } catch (error) {

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Input from "../../UI/Input";
 import classes from "./Admin.module.scss";
 import { Fragment } from "react";
@@ -9,6 +9,7 @@ import configData from "../../config/config.json";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { registration } from "../../services/authService";
 
 const Admin = props => {
 
@@ -16,7 +17,73 @@ const Admin = props => {
   const [uploadPercentage, setUploadPercentage] = useState(0);
 
   let banner = "";
+  let avatar = "";
   let isBannerAvailable = null;
+  let data = new FormData();
+
+  const isEmpty = (value) => value.trim() === '';
+  const isPhone = (value) => value.trim().length === 10;
+  const isEmail = (value) => /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(value);
+
+  const emailRef = useRef();
+  const fnameRef = useRef();
+  const lnameRef = useRef();
+  const addressRef = useRef();
+  const phoneRef = useRef();
+  const cnameRef = useRef();
+
+  const addAdmin = async (event) => {
+    event.preventDefault();
+
+    const register = {
+      first_name: fnameRef.current.value,
+      last_name: lnameRef.current.value,
+      email: emailRef.current.value,
+      pwd: `${fnameRef.current.value}@${cnameRef.current.value}123`,
+      phone: phoneRef.current.value,
+      address: addressRef.current.value,
+      company_name: cnameRef.current.value,
+      pic: avatar
+    }
+    data.append("first_name", register.first_name);
+    data.append("last_name", register.last_name);
+    data.append("email", register.email);
+    data.append("pwd", register.pwd);
+    data.append("phone", register.phone);
+    data.append("address", register.address);
+    data.append("user_role", 'ADMIN');
+    data.append("company_name", register.company_name);
+    data.append("pic", register.pic);
+
+    if (isEmpty(register.email && register.pic && register.first_name && register.last_name && register.phone && register.address && register.company_name) || !isPhone(register.phone) || !isEmail(register.email)) {
+      addToast("Data is not properly filled up!", {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+    } else {
+      await axios.post(`${configData.BASEURL}register`, data).then(res => {
+        console.log('register', res);
+        addToast("Successfully registered", {
+          appearance: 'success',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
+
+      }).catch(err => {
+        console.log(err);
+        addToast("Data is not properly filled up!", {
+          appearance: 'error',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
+      });
+    }
+  }
+
+  const adminChangeHandler = (e) => {
+    avatar = e.target.files[0];
+  }
 
   const changeitem = (e) => {
     !banner ? banner = e.target.files[0] : banner = "";
@@ -71,7 +138,6 @@ const Admin = props => {
     try {
       if (banner) {
         if (isBannerAvailable) {
-          let data = new FormData();
           data.append("file", banner);
           const option = {
             onUploadProgress: ProgressEvent => {
@@ -147,42 +213,48 @@ const Admin = props => {
           <Input
             input={{
               type: "text",
-              placeholder: "Company Name"
+              placeholder: "Company Name",
+              ref: cnameRef
             }}
           />
 
           <Input
             input={{
               type: "text",
-              placeholder: "Owner's First Name"
+              placeholder: "Owner's First Name",
+              ref: fnameRef
             }}
           />
 
           <Input
             input={{
               type: "text",
-              placeholder: "Owner's Last Name"
+              placeholder: "Owner's Last Name",
+              ref: lnameRef
             }}
           />
 
           <Input
             input={{
               type: "number",
-              placeholder: "Phone"
+              placeholder: "Phone",
+              ref: phoneRef
             }}
           />
 
           <Input
             input={{
               type: "email",
-              placeholder: "Email"
+              placeholder: "Email",
+              ref: emailRef
             }}
           />
 
           <Input
             input={{
               type: "text",
-              placeholder: "Address"
+              placeholder: "Address",
+              ref: addressRef
             }}
           />
 
@@ -190,11 +262,12 @@ const Admin = props => {
             label="Logo :"
             input={{
               type: "file",
-              placeholder: "Logo"
+              placeholder: "Logo",
+              onChange: adminChangeHandler
             }}
           />
 
-          <button>Submit</button>
+          <button onClick={addAdmin}>Submit</button>
         </form>
 
         <div className={classes.advertisement}>
