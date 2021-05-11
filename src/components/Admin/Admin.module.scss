@@ -84,7 +84,7 @@ input[type=file] {
         background: #fff;
         display: flex;
         padding: 10px;
-        margin-top: 10px;
+        margin-top: 20px;
         img {
             box-shadow: 0px 0px 5px 1px #64656552;
             margin-right: 20px;
@@ -96,10 +96,15 @@ input[type=file] {
         .title {
             font-size: 22px;
             margin: 0;
+            text-transform: capitalize;
             &::first-letter {
                 color: $primary-color;
                 font-size: 150%;
             }
+        }
+
+        .capital{
+            text-transform: capitalize;
         }
 
         small {

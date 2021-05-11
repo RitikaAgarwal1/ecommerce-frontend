@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Input from "../../UI/Input";
 import classes from "./Admin.module.scss";
 import { Fragment } from "react";
@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import configData from "../../config/config.json";
+import { getUserDetailsByKey } from "../../services/authService";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -15,6 +16,12 @@ const Admin = props => {
 
   const { addToast } = useToasts();
   const [uploadPercentage, setUploadPercentage] = useState(0);
+  const [admins, setAdmins] = useState(null);
+  let count = 0;
+
+  useEffect(() => {
+    fetchUsers('user_role', 'ADMIN');
+  }, [count]);
 
   let banner = "";
   let avatar = "";
@@ -55,7 +62,15 @@ const Admin = props => {
     data.append("company_name", register.company_name);
     data.append("pic", register.pic);
 
-    if (isEmpty(register.email && register.pic && register.first_name && register.last_name && register.phone && register.address && register.company_name) || !isPhone(register.phone) || !isEmail(register.email)) {
+    if (!register.pic) {
+      addToast("Please upload the pic again if already uploaded", {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+    }
+
+    if (isEmpty(register.email || register.first_name || register.last_name || register.phone || register.address || register.company_name) || !isPhone(register.phone) || !isEmail(register.email)) {
       addToast("Data is not properly filled up!", {
         appearance: 'error',
         autoDismiss: true,
@@ -69,6 +84,10 @@ const Admin = props => {
           autoDismiss: true,
           placement: "bottom-center"
         });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
 
       }).catch(err => {
         console.log(err);
@@ -203,6 +222,22 @@ const Admin = props => {
       });
     } catch (error) {
       console.log(error);
+      addToast(error.message, {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+    }
+  }
+
+  const fetchUsers = async (key, value) => {
+    try {
+      const result = await getUserDetailsByKey(key, value);
+      console.log(result);
+      setAdmins(result);
+
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -281,27 +316,34 @@ const Admin = props => {
 
         </div>
 
-        <div className={classes.content}>
-          <img
-            src="https://cdn.logo.com/hotlink-ok/logo-social-sq.png"
-            width="10%"
-            height="10%"
-          />
-          <span>
-            <p className={classes.title}>Company Name</p>
-            <p>First Last</p>
-            <small>Phone</small>
-            <small>Email</small>
-            <small>Address</small>
-            <small>created on</small>
-          </span>
+        <div>
+          {!admins ? <h1>No Admins</h1> :
+            admins.map((admin, index) => {
+              return <Fragment>
+                <div className={classes.content} key={admin.uuid}>
+                  <img
+                    src={`${configData.BASEURL}userImageByUuid?field=uuid&value=${admin.uuid}`}
+                    width="10%"
+                    height="10%"
+                  />
+                  <span>
+                    <p className={classes.title}>{admin.company_name}</p>
+                    <p className={classes.capital}>{admin.first_name} {admin.last_name}</p>
+                    <small className={classes.capital}>{admin.phone}</small>
+                    <small>{admin.email}</small>
+                    <small className={classes.capital}>{admin.address}</small>
+                    <small>{admin.created_on}</small>
+                  </span>
 
-          <span className={classes.btns}>
-            <Link to="/adminProfile/company1">
-              <button>Edit</button>
-            </Link>
-            <button>Delete</button>
-          </span>
+                  <span className={classes.btns}>
+                    <Link to="/adminProfile/company1">
+                      <button>Edit</button>
+                    </Link>
+                    <button>Delete</button>
+                  </span>
+                </div>
+              </Fragment>
+            })};
         </div>
 
         <div className={classes.content}>
