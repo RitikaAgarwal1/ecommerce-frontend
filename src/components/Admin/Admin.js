@@ -11,12 +11,17 @@ import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionSe
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { registration } from "../../services/authService";
+import formattedDate from "../../Utils/Utils";
+import Loader from "../../Loader/Loader";
+import Pagination from "../../Pagination/Pagination";
 
 const Admin = props => {
 
   const { addToast } = useToasts();
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [admins, setAdmins] = useState(null);
+  const [isLoader, setIsLoader] = useState(true);
+  const [pageCount, setPageCount] = useState(1);
   let count = 0;
 
   useEffect(() => {
@@ -41,6 +46,7 @@ const Admin = props => {
 
   const addAdmin = async (event) => {
     event.preventDefault();
+    setIsLoader(true);
 
     const register = {
       first_name: fnameRef.current.value,
@@ -78,6 +84,7 @@ const Admin = props => {
       });
     } else {
       await axios.post(`${configData.BASEURL}register`, data).then(res => {
+        setIsLoader(false);
         console.log('register', res);
         addToast("Successfully registered", {
           appearance: 'success',
@@ -91,6 +98,7 @@ const Admin = props => {
 
       }).catch(err => {
         console.log(err);
+        setIsLoader(false);
         addToast("Data is not properly filled up!", {
           appearance: 'error',
           autoDismiss: true,
@@ -203,15 +211,18 @@ const Admin = props => {
 
   const deleteBanner = async () => {
     try {
+      setIsLoader(true);
       deleteAdBanner().then(data => {
         console.log(data);
         if (data.message === "There is no image for deleting!") {
+          setIsLoader(false);
           addToast(data.message, {
             appearance: 'info',
             autoDismiss: true,
             placement: "bottom-center"
           });
         } else if (data.message === "Banner successfully deleted!") {
+          setIsLoader(false);
           addToast(data.message, {
             appearance: 'success',
             autoDismiss: true,
@@ -235,14 +246,18 @@ const Admin = props => {
       const result = await getUserDetailsByKey(key, value);
       console.log(result);
       setAdmins(result);
-
+      const pages = Math.max(Math.round(result.length / 5), 1);
+      setPageCount(pages);
+      setIsLoader(false);
     } catch (error) {
       console.log(error);
+      setIsLoader(false);
     }
   }
 
   return (
     <Fragment>
+      {isLoader && <Loader />}
       <div className={classes.container}>
         <form className={classes.form}>
           <Input
@@ -332,11 +347,11 @@ const Admin = props => {
                     <small className={classes.capital}>{admin.phone}</small>
                     <small>{admin.email}</small>
                     <small className={classes.capital}>{admin.address}</small>
-                    <small>{admin.created_on}</small>
+                    <small>{formattedDate(admin.created_on)}</small>
                   </span>
 
                   <span className={classes.btns}>
-                    <Link to="/adminProfile/company1">
+                    <Link to={`/adminProfile/${admin.company_name}`}>
                       <button>Edit</button>
                     </Link>
                     <button>Delete</button>
@@ -368,6 +383,7 @@ const Admin = props => {
             <button>Delete</button>
           </span>
         </div>
+        <Pagination pageCount={pageCount} data={admins} />
       </div>
     </Fragment>
   );

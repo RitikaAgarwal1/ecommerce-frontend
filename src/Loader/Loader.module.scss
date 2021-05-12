@@ -1,0 +1,54 @@
+@import "../style.scss";
+
+.overlay{
+  background: #d2d2d2f2;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+.content{
+  position: absolute;
+  top: 42%;
+  left: 42%;
+  margin-top: -50px;
+  margin-left: -100px;
+  z-index: 2;
+
+  h2{
+    //color: #100f10;
+    font-size: 5vw;
+    position: fixed;
+    //text-transform: uppercase;
+    //-webkit-text-stroke: 0.3vw #f7f7fe;
+
+    &:before {
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 100%;
+      color: $primary-color;
+      overflow: hidden;
+      position: absolute;
+      content: attr(data-text);
+      border-right: 2px solid $primary-color;
+      -webkit-text-stroke: 0vw $secondary-color;
+      animation: animate 6s linear infinite;
+    }
+  }
+}
+
+@keyframes animate {
+	0%,
+	10%,
+	100% {
+		width: 0;
+	}
+
+	70%,
+	90% {
+		width: 100%;
+	}
+}
