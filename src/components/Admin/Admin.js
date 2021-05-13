@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import configData from "../../config/config.json";
-import { getUserDetailsByKey } from "../../services/authService";
+import { getUserDetailsByKey, deleteUser } from "../../services/authService";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -94,7 +94,7 @@ const Admin = props => {
 
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 1000);
 
       }).catch(err => {
         console.log(err);
@@ -255,6 +255,31 @@ const Admin = props => {
     }
   }
 
+  const deleteUserById = async (id) => {
+    try {
+      setIsLoader(true);
+      const result = await deleteUser(id);
+      console.log(result);
+      setIsLoader(false);
+      addToast("Successfully deleted", {
+        appearance: 'success',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    } catch (error) {
+      console.log(error);
+      setIsLoader(false);
+      addToast(error.message, {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+    }
+  }
+
   return (
     <Fragment>
       {isLoader && <Loader />}
@@ -354,34 +379,11 @@ const Admin = props => {
                     <Link to={`/adminProfile/${admin.company_name}`}>
                       <button>Edit</button>
                     </Link>
-                    <button>Delete</button>
+                    <button onClick={() => deleteUserById(admin.id)}>Delete</button>
                   </span>
                 </div>
               </Fragment>
             })};
-        </div>
-
-        <div className={classes.content}>
-          <img
-            src="https://cdn.logo.com/hotlink-ok/logo-social-sq.png"
-            width="10%"
-            height="10%"
-          />
-          <span>
-            <p className={classes.title}>Company Name</p>
-            <p>First Last</p>
-            <small>Phone</small>
-            <small>Email</small>
-            <small>Address</small>
-            <small>created on</small>
-          </span>
-
-          <span className={classes.btns}>
-            <Link to="/adminProfile/company2">
-              <button>Edit</button>
-            </Link>
-            <button>Delete</button>
-          </span>
         </div>
         <Pagination pageCount={pageCount} data={admins} />
       </div>

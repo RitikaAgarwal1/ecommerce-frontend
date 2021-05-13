@@ -76,3 +76,20 @@ export const getUserDetailsByKey = async (key, value) => {
         }
     });
 }
+
+export const deleteUser = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const info = {
+                method: "delete",
+                url: `${configData.BASEURL}deleteUser?id=${id}`
+            }
+            let response = await axios(info);
+            console.log(response.data);
+            resolve(response.data);
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
