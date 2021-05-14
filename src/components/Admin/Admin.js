@@ -20,7 +20,13 @@ const Admin = props => {
   const { addToast } = useToasts();
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [admins, setAdmins] = useState(null);
+  const [totalAdmins, setTotalAdmins] = useState(null);
   const [isLoader, setIsLoader] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [index, setIndex] = useState(0);
+  const [showList, setShowList] = useState([]);
+  const [showNext, setShowNext] = useState(true);
   let count = 0;
 
   useEffect(() => {
@@ -240,14 +246,80 @@ const Admin = props => {
 
   const fetchUsers = async (key, value) => {
     try {
+      const listArray = [];
       const result = await getUserDetailsByKey(key, value);
+      setTotalAdmins(result);
       console.log(result);
+      const total = Math.max(Math.ceil(result.length / 5), 1);
+      setTotalPages(total);
+      for (let i = index; i < result.length; i++) {
+        listArray.push(result[i]);
+        if (listArray.length == 5) {
+          console.log(listArray);
+          setIndex(5);
+          setIsLoader(false);
+          setAdmins(listArray);
+          return false;
+        }
+      }
       setAdmins(result);
       setIsLoader(false);
     } catch (error) {
       console.log(error);
       setIsLoader(false);
     }
+  }
+
+  const next = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setAdmins([]);
+    const listArray = [];
+    let i;
+    for (i = index; i < totalAdmins.length; i++) {
+      listArray.push(totalAdmins[i]);
+      if (listArray.length == 5) {
+        console.log(listArray);
+        setIndex(i + 1);
+        const pagenumber = currentPage + 1;
+        setCurrentPage(pagenumber);
+        return false;
+      }
+    }
+    if (totalAdmins.length == index + 1) {
+      setIndex(0);
+      setShowNext(false);
+      setAdmins(listArray);
+    }
+    console.log(listArray);
+    setAdmins(listArray);
+    const pagenumber = currentPage + 1;
+    setCurrentPage(pagenumber);
+  }
+
+  const prev = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setAdmins([]);
+    const listArray = [];
+    let i;
+    for (i = index; i < totalAdmins.length-1; i--) {
+      listArray.push(totalAdmins[i]);
+      if (listArray.length == 5) {
+        console.log(listArray);
+        setIndex(i - 1);
+        const pagenumber = currentPage - 1;
+        setCurrentPage(pagenumber);
+        return false;
+      }
+    }
+    if (totalAdmins.length == index + 1) {
+      setIndex(0);
+      setShowNext(false);
+      //setAdmins(listArray);
+    }
+    console.log(listArray);
+    //setAdmins(listArray);
+    const pagenumber = currentPage - 1;
+    setCurrentPage(pagenumber);
   }
 
   const deleteUserById = async (id) => {
@@ -377,6 +449,11 @@ const Admin = props => {
                 </div>
               </Fragment>
             })};
+            <div className={classes.pagination}>First <span onClick={prev} className={classes.navigate}> Previous</span> Current Page: {currentPage} Total Pages: {totalPages}
+            {showNext &&
+              <span onClick={next} className={classes.navigate}> Next</span>
+            }
+            <span> Last</span></div>
         </div>
       </div>
     </Fragment>
