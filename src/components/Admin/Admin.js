@@ -13,7 +13,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import { registration } from "../../services/authService";
 import formattedDate from "../../Utils/Utils";
 import Loader from "../../Loader/Loader";
-import Pagination from "../../Pagination/Pagination";
+import ReactPaginate from 'react-paginate';
 
 const Admin = props => {
 
@@ -21,7 +21,6 @@ const Admin = props => {
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [admins, setAdmins] = useState(null);
   const [isLoader, setIsLoader] = useState(true);
-  const [pageCount, setPageCount] = useState(1);
   let count = 0;
 
   useEffect(() => {
@@ -92,9 +91,7 @@ const Admin = props => {
           placement: "bottom-center"
         });
 
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
+        fetchUsers('user_role', 'ADMIN');
 
       }).catch(err => {
         console.log(err);
@@ -246,8 +243,6 @@ const Admin = props => {
       const result = await getUserDetailsByKey(key, value);
       console.log(result);
       setAdmins(result);
-      const pages = Math.max(Math.round(result.length / 5), 1);
-      setPageCount(pages);
       setIsLoader(false);
     } catch (error) {
       console.log(error);
@@ -266,9 +261,7 @@ const Admin = props => {
         autoDismiss: true,
         placement: "bottom-center"
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      fetchUsers('user_role', 'ADMIN');
     } catch (error) {
       console.log(error);
       setIsLoader(false);
@@ -385,7 +378,6 @@ const Admin = props => {
               </Fragment>
             })};
         </div>
-        <Pagination pageCount={pageCount} data={admins} />
       </div>
     </Fragment>
   );

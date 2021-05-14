@@ -6,6 +6,18 @@
         text-transform: lowercase;
     }
 
+    .info{
+        font-size: 11px;
+        position: relative;
+        top: -6px;
+        color: $primary-color;
+
+        &:hover{
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
+
     div {
         padding: 5px 0;
 

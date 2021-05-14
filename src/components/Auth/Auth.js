@@ -11,6 +11,7 @@ import configData from "../../config/config.json";
 const Auth = props => {
     const { addToast } = useToasts();
     const [isAdmin, setIsAdmin] = useState('');
+    const [isToggle, setIsToggle] = useState('Show Password');
     let data = new FormData();
 
     const isEmpty = (value) => value.trim() === '';
@@ -45,7 +46,8 @@ const Auth = props => {
                 let response;
                 try {
                     response = await login(signIn);
-                    if (response.user.user_role != props.modalContent) {
+                    let role = response.user.user_role == "SUPERADMIN" ? "ADMIN" : response.user.user_role;
+                    if (role != props.modalContent) {
                         addToast('You are not registered as ' + props.modalContent.toLowerCase() + ' . Please signin as valid role.', {
                             appearance: 'error',
                             autoDismiss: true,
@@ -61,7 +63,7 @@ const Auth = props => {
                     console.log(error);
                     err = error;
                 }
-                addToast(err ? err.response.data.Error : "You are now successfully logged in", {
+                addToast(err ? err.message : "You are now successfully logged in", {
                     appearance: err ? 'error' : 'success',
                     autoDismiss: true,
                     placement: "bottom-center"
@@ -122,18 +124,29 @@ const Auth = props => {
                     setTimeout(() => {
                         props.onClose();
                     }, 1000);
-            
-                  }).catch(err => {
+
+                }).catch(err => {
                     console.log(err.response);
                     addToast(err.response.data.Error, {
-                      appearance: 'error',
-                      autoDismiss: true,
-                      placement: "bottom-center"
+                        appearance: 'error',
+                        autoDismiss: true,
+                        placement: "bottom-center"
                     });
-                  });
+                });
             }
         }
     };
+
+    const showPassword = (event) => {
+        var x = document.getElementById("pass");
+        if (x.type === "password") {
+            x.type = "text";
+            setIsToggle('Hide Password');
+        } else {
+            x.type = "password";
+            setIsToggle('Show Password');
+        }
+    }
 
     return (
         <Modal>
@@ -165,9 +178,11 @@ const Auth = props => {
                         label="Password"
                         input={{
                             type: "password",
-                            ref: passRef
+                            ref: passRef,
+                            id: "pass"
                         }}
                     />
+                    <small className={classes.info} onClick={showPassword}>{isToggle}</small>
                     <Input
                         label="Phone Number"
                         input={{
@@ -229,9 +244,11 @@ const Auth = props => {
                         label="Password"
                         input={{
                             type: "password",
-                            ref: passRef
+                            ref: passRef,
+                            id: "pass"
                         }}
                     />
+                    <small className={classes.info} onClick={showPassword}>{isToggle}</small>
                     <div className={classes.btn}>
                         <button onClick={props.onClose}>Cancel</button>
                         <button onClick={authUser} >Sign in</button>

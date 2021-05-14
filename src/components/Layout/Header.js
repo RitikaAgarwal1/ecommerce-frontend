@@ -4,6 +4,7 @@ import classes from "./Header.module.scss";
 import ReactTooltip from "react-tooltip";
 import { NavLink } from "react-router-dom";
 import { logout } from "../../services/authService";
+import { Link } from "react-router-dom";
 
 const Header = props => {
 
@@ -14,7 +15,6 @@ const Header = props => {
     setIsLogin(localStorage.getItem('login') ? true : false);
     const adminTrue = isLogin? JSON.parse(localStorage.getItem('userDetails')).user_role : 'USER';
     setIsAdmin(adminTrue);
-    console.log(adminTrue);
   });
 
   const signout = async () => {
@@ -36,7 +36,7 @@ const Header = props => {
         <h1><NavLink to="/ecommerce-frontend">Ecommerce</NavLink></h1>
 
         <div>
-          {isAdmin == 'ADMIN' &&
+          {isAdmin == 'SUPERADMIN' &&
             <p><NavLink to="/admin">Admin</NavLink></p>
           }
 
@@ -96,7 +96,7 @@ const Header = props => {
               </NavLink>
             </li>
             {isLogin &&
-              <li onClick={signout}>Logout</li>
+              <Link to="/ecommerce-frontend"><li onClick={signout}>Logout</li></Link>
             }
 
           </ul>

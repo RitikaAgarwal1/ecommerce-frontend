@@ -20,6 +20,27 @@ input[type=file] {
 }
 
 .container {
+    //  /* width */
+    //  ::-webkit-scrollbar {
+    //     width: 10px;
+    // }
+
+    // /* Track */
+    // ::-webkit-scrollbar-track {
+    //     background: #f1f1f1; 
+    // }
+
+    // /* Handle */
+    // ::-webkit-scrollbar-thumb {
+    //     background: #cacaca;
+    //     border-radius: 5px;
+    // }
+
+    // /* Handle on hover */
+    // ::-webkit-scrollbar-thumb:hover {
+    //     background: $secondary-color; 
+    // }
+
 	background: #f3f2f7;
 	padding-bottom: 2%;
 
@@ -78,46 +99,46 @@ input[type=file] {
         }
     }
 
-    .content {
-        border: 2px solid $primary-color;
-        margin: 0 2% 0 2%;
-        background: #fff;
-        display: flex;
-        padding: 10px;
-        margin-top: 20px;
-        img {
-            box-shadow: 0px 0px 5px 1px #64656552;
-            margin-right: 20px;
-        }
-        a {
-            color: #fff;
-        }
-
-        .title {
-            font-size: 22px;
-            margin: 0;
-            text-transform: capitalize;
-            &::first-letter {
-                color: $primary-color;
-                font-size: 150%;
+        .content {
+            border: 2px solid $primary-color;
+            margin: 0 2% 0 2%;
+            background: #fff;
+            display: flex;
+            padding: 10px;
+            margin-top: 20px;
+            img {
+                box-shadow: 0px 0px 5px 1px #64656552;
+                margin-right: 20px;
             }
-        }
+            a {
+                color: #fff;
+            }
 
-        .capital{
-            text-transform: capitalize;
-        }
+            .title {
+                font-size: 22px;
+                margin: 0;
+                text-transform: capitalize;
+                &::first-letter {
+                    color: $primary-color;
+                    font-size: 150%;
+                }
+            }
 
-        small {
-            display: block;
-        }
+            .capital{
+                text-transform: capitalize;
+            }
 
-        .btns {
-            margin-left: auto;
-            align-self: center;
-            button {
-                width: 83px;
-                justify-content: center;
+            small {
+                display: block;
+            }
+
+            .btns {
+                margin-left: auto;
+                align-self: center;
+                button {
+                    width: 83px;
+                    justify-content: center;
+                }
             }
         }
     }
-}
