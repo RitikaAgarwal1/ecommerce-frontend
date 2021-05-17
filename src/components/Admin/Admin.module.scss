@@ -32,7 +32,6 @@ input[type=file] {
 
         .navigate{
             &:hover{
-                color: $primary-color;
                 cursor: pointer;
                 text-decoration: underline;
             }
