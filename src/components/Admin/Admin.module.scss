@@ -136,3 +136,54 @@ input[type=file] {
             }
         }
     }
+
+    .detailContainer{
+        padding: 0 2%;
+
+        .head{
+            display: flex;
+
+            h1{
+                width: 95%;
+            }
+
+            button{
+                margin: auto;
+            }
+        }
+
+        .detailContent{
+            display: flex;
+            border: 2px solid #c2d44e;
+            padding: 1%;
+
+            img{
+                box-shadow: 0 0 5px 1px rgb(100 101 101 / 32%);
+                margin-right: 40px;
+            }
+
+            .editProfile{
+                width: 100%;
+                font-size: 25px;
+                margin: 0;
+
+                div{
+                    display: inline-flex;
+                    width: 100%;
+                    padding-top: 12px;
+
+                    label{
+                        width: 20%;
+                    }
+
+                    input{
+                        width: 78%;
+                        font-size: 18px;
+                        color: #646565;
+                        border: 1px solid #d8d8d8;
+                        padding-left: 10px;
+                    }
+                }
+            }
+        }
+    }

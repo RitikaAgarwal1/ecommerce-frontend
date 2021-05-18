@@ -30,7 +30,7 @@ export const logout = async (body) => {
                 url: `${configData.BASEURL}signout`
             }
             let response = await axios(info);
-            console.log(response);
+            //console.log(response);
             resolve(response.data);
 
         } catch (error) {
@@ -49,7 +49,7 @@ export const registration = async (body) => {
                 url: `${configData.BASEURL}register`
             }
             let response = await axios(info, body);
-            console.log(response.data);
+            //console.log(response.data);
             resolve(response.data);
 
         } catch (error) {
@@ -67,7 +67,7 @@ export const getUserDetailsByKey = async (key, value) => {
                 url: `${configData.BASEURL}userDetails?field=${key}&value=${value}`
             }
             let response = await axios(info);
-            console.log(response);
+            //console.log(response);
             resolve(response.data);
 
         } catch (error) {
@@ -85,7 +85,7 @@ export const deleteUser = async (id) => {
                 url: `${configData.BASEURL}deleteUser?id=${id}`
             }
             let response = await axios(info);
-            console.log(response.data);
+            //console.log(response.data);
             resolve(response.data);
         } catch (error) {
             console.log(error);

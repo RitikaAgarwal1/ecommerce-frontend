@@ -462,8 +462,8 @@ const Admin = props => {
         <div>
           {!admins ? <h1>No Admins</h1> :
             admins.map((admin, index) => {
-              return <Fragment>
-                <div className={classes.content} key={admin.uuid}>
+              return <Fragment key={admin.uuid}>
+                <div className={classes.content}>
                   <img
                     src={`${configData.BASEURL}userImageByUuid?field=uuid&value=${admin.uuid}`}
                     width="10%"
