@@ -1,0 +1,13 @@
+@import "../style.scss";
+
+input[type='checkbox']{
+    &::before{
+        color: $primary-color;
+    }
+    &::after{
+        content: none;
+    }
+    &:checked{
+        background: $primary-color;
+    }
+}

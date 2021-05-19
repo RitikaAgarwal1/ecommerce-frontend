@@ -23,6 +23,25 @@ input[type=file] {
 	background: #f3f2f7;
 	padding-bottom: 2%;
 
+    .sortDiv{
+        padding: 0 2%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        select, input{
+            padding: 5px 10px;
+            outline: none;
+            border: 1px solid #c7c7c7;
+            color: $secondary-color;
+        }
+
+        .deleteBulk{
+            display: inline;
+            margin-left: 5px;
+        }
+    }
+
     .pagination{
         color: #646565;
         text-align: right;
@@ -129,6 +148,25 @@ input[type=file] {
             .btns {
                 margin-left: auto;
                 align-self: center;
+
+                .selection{
+                    display: flex;
+                    border: 1px solid $primary-color;
+                    padding: 5px 0;
+                    font-size: 14px;
+                    justify-content: space-between;
+                    position: relative;
+
+                    span{
+                        margin: 2px 15px 0 0;
+                    }
+
+                    input[type="checkbox"]{
+                        cursor: pointer;
+                        margin-left: 5px;
+                    }
+                }
+
                 button {
                     width: 83px;
                     justify-content: center;

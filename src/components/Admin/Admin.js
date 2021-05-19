@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import configData from "../../config/config.json";
-import { getUserDetailsByKey, deleteUser } from "../../services/authService";
+import { getUserDetailsByKey, deleteUser, deleteUsersBySelection } from "../../services/authService";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
@@ -29,16 +29,18 @@ const Admin = props => {
   const [showPrev, setShowPrev] = useState(false);
   const [showLast, setShowLast] = useState(true);
   const [showFirst, setShowFirst] = useState(false);
-  let count = 0;
+  const [size, setSize] = useState(0);
+  const [state, setState] = useState(false);
 
   useEffect(() => {
     fetchUsers('user_role', 'ADMIN');
-  }, [count]);
+  }, []);
 
   let banner = "";
   let avatar = "";
   let isBannerAvailable = null;
   let data = new FormData();
+  let selectedData = [];
 
   const isEmpty = (value) => value.trim() === '';
   const isPhone = (value) => value.trim().length === 10;
@@ -50,6 +52,14 @@ const Admin = props => {
   const addressRef = useRef();
   const phoneRef = useRef();
   const cnameRef = useRef();
+  const selectId = useRef();
+
+  const checkAll = () => {
+    var inputs = document.querySelectorAll('.check');
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].checked = true;
+    }
+  }
 
   const addAdmin = async (event) => {
     event.preventDefault();
@@ -248,6 +258,7 @@ const Admin = props => {
 
   const fetchUsers = async (key, value) => {
     try {
+      window.addEventListener('load', checkAll, false);
       setIsLoader(true);
       setShowFirst(false);
       setShowLast(true);
@@ -263,6 +274,7 @@ const Admin = props => {
       //console.log(result);
       const total = Math.max(Math.ceil(result.length / 5), 1);
       setTotalPages(total);
+      result.sort(dynamicSort("company_name", 'ASC'));
       for (let i = 0; i < result.length; i++) {
         listArray.push(result[i]);
         if (listArray.length == 5) {
@@ -273,6 +285,7 @@ const Admin = props => {
           return false;
         }
       }
+      sortAdmins();
       setAdmins(result);
       setIsLoader(false);
     } catch (error) {
@@ -282,6 +295,7 @@ const Admin = props => {
   }
 
   const last = () => {
+    window.addEventListener('load', checkAll, false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setShowFirst(true);
     setShowPrev(true);
@@ -296,9 +310,10 @@ const Admin = props => {
   }
 
   const next = () => {
-    if (currentPage != totalPages){
+    window.addEventListener('load', checkAll, false);
+    if (currentPage != totalPages) {
       const pagenumber = currentPage + 1;
-        setCurrentPage(pagenumber);
+      setCurrentPage(pagenumber);
     }
     if (totalPages == currentPage + 1) {
       setIndex(totalAdmins.length);
@@ -312,6 +327,7 @@ const Admin = props => {
     setAdmins([]);
     const listArray = [];
     let i;
+    totalAdmins.sort(dynamicSort('company_name', 'ASC'));
     for (i = index; i < totalAdmins.length; i++) {
       listArray.push(totalAdmins[i]);
       if (listArray.length == 5) {
@@ -325,14 +341,16 @@ const Admin = props => {
     setAdmins(listArray);
     const pagenumber = currentPage + 1;
     setCurrentPage(pagenumber);
+    setSize(listArray.length);
   }
 
   const prev = () => {
-    if (currentPage >= 2){
+    window.addEventListener('load', checkAll, false);
+    if (currentPage >= 2) {
       const pagenumber = currentPage - 1;
       setCurrentPage(pagenumber);
     }
-    if (currentPage <= 2){
+    if (currentPage <= 2) {
       setShowPrev(false);
       setShowFirst(false);
     }
@@ -342,12 +360,12 @@ const Admin = props => {
     setAdmins([]);
     const listArray = [];
     let i;
-    for (i = index - 2; i >= 0; i--) {
+    totalAdmins.sort(dynamicSort('company_name', 'ASC'));
+    for (i = index - (size + 1); i >= 0; i--) {
       listArray.push(totalAdmins[i]);
       if (listArray.length == 5) {
         //console.log(listArray);
         setAdmins(listArray.reverse());
-        setIndex(i);
         setShowPrev(false);
         setShowFirst(false);
         if (i == 0) {
@@ -355,6 +373,7 @@ const Admin = props => {
         }
         return false;
       }
+      setIndex(i);
     }
     //console.log(listArray);
     setAdmins(listArray.reverse());
@@ -380,6 +399,117 @@ const Admin = props => {
         autoDismiss: true,
         placement: "bottom-center"
       });
+    }
+  }
+
+  const dynamicSort = (property, order) => {
+    var sortOrder = 1;
+    if (property[0] === "-") {
+      sortOrder = -1;
+      property = property.substr(1);
+    }
+    return function (a, b) {
+      /* next line works with strings and numbers, 
+       * and you may want to customize it to your needs
+       */
+      if (order == 'ASC' || null) {
+        var result = (a[property].toLowerCase() < b[property].toLowerCase()) ? -1 : (a[property].toLowerCase() > b[property].toLowerCase()) ? 1 : 0;
+        return result * sortOrder;
+
+      } else if (order == 'DESC') {
+        var result = (a[property].toLowerCase() > b[property].toLowerCase()) ? -1 : (a[property].toLowerCase() < b[property].toLowerCase()) ? 1 : 0;
+        return result * sortOrder;
+      }
+
+    }
+  }
+
+  const sortAdmins = (event) => {
+    setIsLoader(true);
+    setShowFirst(false);
+    setShowLast(true);
+    setCurrentPage(1);
+    setShowNext(true);
+    setShowPrev(false);
+    const order = event.target.value;
+    totalAdmins.sort(dynamicSort("company_name", order));
+    const listArray = [];
+    for (let i = 0; i < totalAdmins.length; i++) {
+      listArray.push(totalAdmins[i]);
+      if (listArray.length == 5) {
+        setIndex(5);
+        setIsLoader(false);
+        setAdmins(listArray);
+        return listArray;
+      }
+    }
+  }
+
+  const filterData = (event) => {
+    if (!totalAdmins) {
+      addToast("There is no data to search from", {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+    } else {
+      let adminArray = totalAdmins.filter(x => x.company_name.toLowerCase() === event.target.value.toLowerCase());
+      if (adminArray.length > 0) {
+        setAdmins(adminArray);
+        setShowPrev(false);
+        setShowFirst(false);
+        setShowLast(false);
+        setShowNext(false);
+      } else if (adminArray.length <= 0) {
+        let listArray = [];
+        for (let i = 0; i < totalAdmins.length; i++) {
+          listArray.push(totalAdmins[i]);
+          if (listArray.length == 5) {
+            setIndex(5);
+            setIsLoader(false);
+            setShowLast(true);
+            setShowNext(true);
+            setAdmins(listArray);
+            setCurrentPage(1);
+            return listArray;
+          }
+        }
+      }
+    }
+  }
+
+  const deleteSelectedUsers = (e, id) => {
+    if (e.target.checked) {
+      if (selectedData.indexOf(id) == -1) {
+        selectedData.push(id);
+      }
+    } else if (!e.target.checked) {
+      const index = selectedData.indexOf(id);
+      selectedData.splice(index, 1);
+    }
+  }
+
+  const deleteBulk = async () => {
+    try {
+      window.addEventListener('load', checkAll, false);
+      if (selectedData.length == 0) {
+        addToast("No Admin Selected", {
+          appearance: 'error',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
+      } else {
+        const result = await deleteUsersBySelection(selectedData);
+        //console.log(result);
+        addToast(result.message, {
+          appearance: 'success',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
+        fetchUsers('user_role', 'ADMIN');
+      }
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -459,6 +589,28 @@ const Admin = props => {
 
         </div>
 
+        <div className={classes.sortDiv}>
+
+          <Input
+            label="Filter By "
+            input={{
+              type: "text",
+              placeholder: "Company Name",
+              onChange: filterData
+            }}
+          />
+
+          <span>
+            <label>Sort By: </label>
+            <select onChange={sortAdmins}>
+              <option value="ASC">A - Z</option>
+              <option value="DESC">Z - A</option>
+            </select>
+
+            <button className={classes.deleteBulk} onClick={deleteBulk}>Delete Selected Admins</button>
+          </span>
+        </div>
+
         <div>
           {!admins ? <h1>No Admins</h1> :
             admins.map((admin, index) => {
@@ -479,6 +631,18 @@ const Admin = props => {
                   </span>
 
                   <span className={classes.btns}>
+                    <div className={classes.selection}>
+                      <Input
+                        input={{
+                          type: "checkbox",
+                          className: "check",
+                          ref: selectId,
+                          onChange: (e) => deleteSelectedUsers(e, admin.id)
+                        }}
+                      />
+                      <span>Select</span>
+                    </div>
+
                     <Link to={`/adminProfile/${admin.company_name}`}>
                       <button>Edit</button>
                     </Link>

@@ -93,3 +93,23 @@ export const deleteUser = async (id) => {
         }
     })
 }
+
+export const deleteUsersBySelection = async (body) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const info = {
+                method: "delete",
+                url: `${configData.BASEURL}deleteBulkUsers`,
+                data: {
+                    "ids": body
+                }
+            }
+            let response = await axios(info);
+            //console.log(response.data);
+            resolve(response.data);
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
