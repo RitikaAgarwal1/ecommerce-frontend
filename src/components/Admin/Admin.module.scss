@@ -19,6 +19,42 @@ input[type=file] {
     font-size: 32px;
 }
 
+form.form {
+    padding: 20px;
+    background: $secondary-color;
+    display: flex;
+    margin-bottom: 2%;
+
+    input {
+        border: 1px solid grey;
+        height: 25px;
+        margin: 0 10px 0 10px;
+        font-family: $primary-font;
+    }
+
+    div {
+        display: inline;
+        margin: 0 2px 0 2px;
+    }
+
+    input[type=file] {
+        border: none;
+        color: #fff;
+        width: 77%;
+        padding: 0px;
+    }
+
+    label {
+        color: #fff;
+        font-size: 12px;
+    }
+
+    button {
+        display: inline;
+        margin: auto;
+    }
+}
+
 .container {
 	background: #f3f2f7;
 	padding-bottom: 2%;
@@ -75,42 +111,6 @@ input[type=file] {
             margin-right: 5px;
         }
     }
-    
-    
-    form.form {
-        padding: 20px;
-        background: $secondary-color;
-        display: flex;
-        margin-bottom: 2%;
-    
-        input {
-            border: 1px solid grey;
-            height: 25px;
-            margin: 0 10px 0 10px;
-        }
-    
-        div {
-            display: inline;
-            margin: 0 2px 0 2px;
-        }
-    
-        input[type=file] {
-            border: none;
-            color: #fff;
-            width: 77%;
-            padding: 0px;
-        }
-    
-        label {
-            color: #fff;
-            font-size: 12px;
-        }
-    
-        button {
-            display: inline;
-            margin: auto;
-        }
-    }
 
         .content {
             border: 2px solid $primary-color;
@@ -158,7 +158,7 @@ input[type=file] {
                     position: relative;
 
                     span{
-                        margin: 2px 15px 0 0;
+                        margin: 2px 26px 0 0;
                     }
 
                     input[type="checkbox"]{
@@ -168,12 +168,14 @@ input[type=file] {
                 }
 
                 button {
-                    width: 83px;
+                    width: 99px;
                     justify-content: center;
                 }
             }
         }
     }
+
+    // Admin Detail page
 
     .detailContainer{
         padding: 0 2%;
@@ -194,7 +196,8 @@ input[type=file] {
             display: flex;
             border: 2px solid #c2d44e;
             padding: 1%;
-
+            margin-bottom: 25px;
+            
             img{
                 box-shadow: 0 0 5px 1px rgb(100 101 101 / 32%);
                 margin-right: 40px;
@@ -220,6 +223,65 @@ input[type=file] {
                         color: #646565;
                         border: 1px solid #d8d8d8;
                         padding-left: 10px;
+                        font-family: $primary-font;
+                    }
+                }
+            }
+        }
+    }
+
+    .productContainer{
+        input{
+            width: 90%;
+            font-family: $primary-font;
+        }
+
+        button{
+            width: 10%;
+        }
+
+        textarea{
+            margin-left: 5px;
+            height: 26px;
+            outline: none;
+            font-family: $primary-font;
+
+            &::placeholder{
+                padding-top: 2px;
+            }
+        }
+    }
+
+    .productDetailContainer{
+        display: flex;
+
+        .products{
+            width: 20%;
+            height: 57vh;
+            margin: 0 10px 10px 10px;
+            position: relative;
+
+            img{
+                width: 100%;
+            }
+
+            .productContent{
+                position: absolute;
+                bottom: 5px;
+                background: #fff;
+                width: 80%;
+                left: 10%;
+                box-shadow: 1px 1px 7px 0px #ccc9c9;
+                height: 16vh;
+                text-align: center;
+
+                p{
+                    font-size: 20px;
+                    margin: 5px;
+                    
+                    &::first-letter {
+                        color: $primary-color;
+                        font-size: 150%;
                     }
                 }
             }

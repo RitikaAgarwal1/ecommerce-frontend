@@ -4,7 +4,7 @@ import axios from 'axios';
 export const login = async (body) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log(body);
+            //console.log(body);
             const info = {
                 method: "post",
                 url: `${configData.BASEURL}signin`,

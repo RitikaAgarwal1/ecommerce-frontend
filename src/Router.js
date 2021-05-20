@@ -54,7 +54,7 @@ const Router = () => {
         <Cart />
       </Route>
 
-      <Route exact path="/adminProfile/:companyName">
+      <Route exact path="/adminProfile/:id">
         <AdminDetail />
       </Route>
     </Switch>
