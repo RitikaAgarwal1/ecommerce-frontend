@@ -1,12 +1,12 @@
 import configData from "../config/config.json";
 import axios from 'axios';
 
-export const getProducts = async () => {
+export const getProductsBySellerid = async (key, value) => {
     return new Promise(async (resolve, reject) => {
         try {
             const info = {
                 method: "get",
-                url: `${configData.BASEURL}productDetails`
+                url: `${configData.BASEURL}productBykey?field=${key}&value=${value}`
             }
             let response = await axios(info);
             //console.log(response);

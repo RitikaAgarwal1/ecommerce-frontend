@@ -14,6 +14,7 @@ import { registration } from "../../services/authService";
 import formattedDate from "../../Utils/Utils";
 import Loader from "../../Loader/Loader";
 import ReactPaginate from 'react-paginate';
+import ReactTooltip from "react-tooltip";
 
 const Admin = props => {
 
@@ -29,6 +30,7 @@ const Admin = props => {
   const [showPrev, setShowPrev] = useState(false);
   const [size, setSize] = useState(0);
   const [orderByRequest, setOrder] = useState('');
+  const [check, setCheck] = useState(false);
 
   useEffect(() => {
     fetchUsers('user_role', 'ADMIN');
@@ -425,12 +427,13 @@ const Admin = props => {
         placement: "bottom-center"
       });
     } else {
-      let adminArray = totalAdmins.filter(x => x.company_name.toLowerCase() === event.target.value.toLowerCase());
-      if (adminArray.length > 0) {
+      let adminArray = totalAdmins.filter(x => x.company_name.toLowerCase().includes(event.target.value.toLowerCase()));
+
+      if (event.target.value !== "") {
         setAdmins(adminArray);
         setShowPrev(false);
         setShowNext(false);
-      } else if (adminArray.length <= 0) {
+      } else if (event.target.value == "") {
         let listArray = [];
         for (let i = 0; i < totalAdmins.length; i++) {
           listArray.push(totalAdmins[i]);
@@ -480,6 +483,11 @@ const Admin = props => {
     } catch (err) {
       console.log(err);
     }
+  }
+
+  const selectAll = () => {
+    console.log('something');
+    // check? setCheck(false): setCheck(true);
   }
 
   return (
@@ -576,7 +584,15 @@ const Admin = props => {
               <option value="DESC">Z - A</option>
             </select>
 
-            <button className={classes.deleteBulk} onClick={deleteBulk}>Delete Selected Admins</button>
+            <i className="fa fa-check-square-o" aria-hidden="true" onClick={selectAll} data-tip data-for="selectTip" />
+            <ReactTooltip id="selectTip" place="top" effect="solid">
+              Select / Deselect All
+              </ReactTooltip>
+
+            <i className="fa fa-trash-o" aria-hidden="true" onClick={deleteBulk} data-tip data-for="deleteTip" />
+            <ReactTooltip id="deleteTip" place="top" effect="solid">
+              Deleted Selected Admins
+              </ReactTooltip>
           </span>
         </div>
 

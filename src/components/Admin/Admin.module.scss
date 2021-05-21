@@ -72,9 +72,15 @@ form.form {
             color: $secondary-color;
         }
 
-        .deleteBulk{
-            display: inline;
-            margin-left: 5px;
+        i{
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 20px;
+            color: #a7a7a7;
+
+            &:hover{
+                color: $secondary-color;
+            }
         }
     }
 
@@ -255,11 +261,24 @@ form.form {
     .productDetailContainer{
         display: flex;
 
+        h1{
+            margin: 2%;
+        }
+
         .products{
             width: 20%;
             height: 57vh;
-            margin: 0 10px 10px 10px;
+            margin: 0 10px 20px 10px;
             position: relative;
+
+            input{
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                width: 20px;
+                height: 20px;
+            }
 
             img{
                 width: 100%;
@@ -272,8 +291,28 @@ form.form {
                 width: 80%;
                 left: 10%;
                 box-shadow: 1px 1px 7px 0px #ccc9c9;
-                height: 16vh;
+                height: 11.5vh;
                 text-align: center;
+
+                span{
+                    display: flex;
+                    margin: auto;
+                    width: 69%;
+                    margin-top: 5px;
+
+                    button{
+                        margin: unset;
+                        
+                        &:first-child{
+                            margin: 5px 5px auto 5px;
+                            padding: 6px 24px;
+                        }
+
+                        &:last-child{
+                            margin: 5px auto 5px 5px;
+                        }
+                    }
+                }
 
                 p{
                     font-size: 20px;

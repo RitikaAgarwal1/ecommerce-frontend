@@ -5,7 +5,7 @@ import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../../Loader/Loader";
 import { getUserDetailsByKey } from "../../services/authService";
-import { getProducts } from "../../services/productService";
+import { getProductsBySellerid } from "../../services/productService";
 import configData from "../../config/config.json";
 import formattedDate from "../../Utils/Utils";
 import { useToasts } from 'react-toast-notifications';
@@ -35,15 +35,12 @@ const AdminDetail = () => {
 
   useEffect(() => {
     fetchUsers('id', id);
-    fetchProducts();
   }, [0]);
 
   const fetchUsers = async (key, value) => {
-    setIsLoader(true);
     const result = await getUserDetailsByKey(key, value);
     setAdminDetail(result[0]);
-    //console.log(adminDetail);
-    setIsLoader(false);
+    fetchProducts(result[0].uuid);
   }
 
   const changeitem = (e) => {
@@ -120,17 +117,18 @@ const AdminDetail = () => {
     }
   }
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (id) => {
     try {
-      setIsLoader(true);
-      const result = await getProducts();
-      console.log(result);
+      const result = await getProductsBySellerid('seller_id', id);
       setAdminProduct(result);
       setIsLoader(false);
     } catch (error) {
       console.log(error);
-      setIsLoader(false);
     }
+  }
+
+  const updateDetails = () => {
+    console.log(updateAdmin);
   }
 
   return (
@@ -148,42 +146,48 @@ const AdminDetail = () => {
               label="Company Name:"
               input={{
                 type: "text",
-                value: adminDetail.company_name
+                value: adminDetail.company_name,
+                onChange: (e) => setAdminDetail({ company_name: e.target.value})
               }}
             />
             <Input
               label="First Name:"
               input={{
                 type: "text",
-                value: adminDetail.first_name
+                value: adminDetail.first_name,
+                onChange: (e) => setAdminDetail({ first_name: e.target.value})
               }}
             />
             <Input
               label="Last Name:"
               input={{
                 type: "text",
-                value: adminDetail.last_name
+                value: adminDetail.last_name,
+                onChange: (e) => setAdminDetail({ last_name: e.target.value})
               }}
             />
             <Input
               label="Phone Number:"
               input={{
                 type: "number",
-                value: adminDetail.phone
+                value: adminDetail.phone,
+                onChange: (e) => setAdminDetail({ phone: e.target.value})
               }}
             />
             <Input
               label="Email Address:"
               input={{
                 type: "email",
-                value: adminDetail.email
+                value: adminDetail.email,
+                onChange: (e) => setAdminDetail({ email: e.target.value})
               }}
             />
             <Input
               label="Address:"
               input={{
                 type: "text",
-                value: adminDetail.address
+                value: adminDetail.address,
+                onChange: (e) => setAdminDetail({ address: e.target.value})
               }}
             />
             <Input
@@ -295,17 +299,21 @@ const AdminDetail = () => {
 
       {/* Products details */}
       <div className={classes.productDetailContainer}>
-        {productDetail.map((product) => {
-          return <div className={classes.products} key={product.id}>
-            <img src={`${configData.BASEURL}productImageByid?field=id&value=${product.id}`} />
-            <div className={classes.productContent}>
-              <p>{product.title}</p>
-              <small>Rs {product.price}</small>
-              <button>Edit</button>
-              <button>Delete</button>
+        {productDetail.length == 0 ? <h1>No Products</h1> :
+          productDetail.map((product) => {
+            return <div className={classes.products} key={product.id}>
+              <img src={`${configData.BASEURL}productImageByid?field=id&value=${product.id}`} alt={product.title} />
+              <input type="checkbox"/>
+              <div className={classes.productContent}>
+                <p>{product.title}</p>
+                <small>Rs {product.price}</small>
+                <span>
+                  <button>Edit</button>
+                  <button>Delete</button>
+                </span>
+              </div>
             </div>
-          </div>
-        })}
+          })}
       </div>
     </Fragment>
   )
