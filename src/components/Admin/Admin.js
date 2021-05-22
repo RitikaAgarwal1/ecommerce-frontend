@@ -52,7 +52,6 @@ const Admin = props => {
   const addressRef = useRef();
   const phoneRef = useRef();
   const cnameRef = useRef();
-  const selectId = useRef();
 
   const checkAll = () => {
     var inputs = document.querySelectorAll('.check');
@@ -486,8 +485,20 @@ const Admin = props => {
   }
 
   const selectAll = () => {
-    console.log('something');
-    // check? setCheck(false): setCheck(true);
+    selectedData = [];
+    const ele = document.getElementsByName('check');
+    for (let i = 0; i < ele.length; i++) {
+      if (ele[i].type == 'checkbox') {
+        if (!check) {
+          ele[i].checked = true;
+          setCheck(true);
+          selectedData.push(admins[i].id);
+        } else {
+          ele[i].checked = false;
+          setCheck(false);
+        }
+      }
+    }
   }
 
   return (
@@ -620,8 +631,7 @@ const Admin = props => {
                       <Input
                         input={{
                           type: "checkbox",
-                          className: "check",
-                          ref: selectId,
+                          name: "check",
                           onChange: (e) => deleteSelectedUsers(e, admin.id)
                         }}
                       />

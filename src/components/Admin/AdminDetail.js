@@ -5,11 +5,12 @@ import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../../Loader/Loader";
 import { getUserDetailsByKey } from "../../services/authService";
-import { getProductsBySellerid } from "../../services/productService";
+import { getProductsBySellerid, deleteProductsBySelection } from "../../services/productService";
 import configData from "../../config/config.json";
 import formattedDate from "../../Utils/Utils";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
+import ReactTooltip from "react-tooltip";
 
 const AdminDetail = () => {
   const { addToast } = useToasts();
@@ -17,9 +18,12 @@ const AdminDetail = () => {
   const [isLoader, setIsLoader] = useState(true);
   const [adminDetail, setAdminDetail] = useState([]);
   const [productDetail, setAdminProduct] = useState([]);
+  const [check, setCheck] = useState(false);
+  const [isGrid, setIsGrid] = useState(true);
   let { id } = useParams();
   let data = new FormData();
   let image = "";
+  let selectedData = [];
 
   const titleRef = useRef();
   const priceRef = useRef();
@@ -37,7 +41,15 @@ const AdminDetail = () => {
     fetchUsers('id', id);
   }, [0]);
 
+  const checkAll = () => {
+    var inputs = document.querySelectorAll('.check');
+    for (var i = 0; i < inputs.length; i++) {
+      inputs[i].checked = true;
+    }
+  }
+
   const fetchUsers = async (key, value) => {
+    window.addEventListener('load', checkAll, false);
     const result = await getUserDetailsByKey(key, value);
     setAdminDetail(result[0]);
     fetchProducts(result[0].uuid);
@@ -127,6 +139,78 @@ const AdminDetail = () => {
     }
   }
 
+  const deleteSelectedProducts = (e, id) => {
+    if (e.target.checked) {
+      if (selectedData.indexOf(id) == -1) {
+        selectedData.push(id);
+      }
+    } else if (!e.target.checked) {
+      const index = selectedData.indexOf(id);
+      selectedData.splice(index, 1);
+    }
+  }
+
+  const deleteBulk = async () => {
+    try {
+      window.addEventListener('load', checkAll, false);
+      if (selectedData.length == 0) {
+        addToast("No Product Selected", {
+          appearance: 'error',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
+      } else {
+        const result = await deleteProductsBySelection(selectedData);
+        //console.log(result);
+        addToast(result.message, {
+          appearance: 'success',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
+        fetchUsers('id', id);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const selectAll = () => {
+    selectedData = [];
+    const ele = document.getElementsByName('check');
+    for (let i = 0; i < ele.length; i++) {
+      if (ele[i].type == 'checkbox') {
+        if (!check) {
+          ele[i].checked = true;
+          setCheck(true);
+          selectedData.push(productDetail[i].id);
+        } else {
+          ele[i].checked = false;
+          setCheck(false);
+        }
+      }
+    }
+  }
+
+  // const sortAdmins = (event) => {
+  //   setIsLoader(true);
+  //   //setCurrentPage(1);
+  //   //setShowNext(true);
+  //   //setShowPrev(false);
+  //   const order = event.target.value;
+  //   setOrder(order);
+  //   productDetail.sort(dynamicSort("title", order));
+  //   const listArray = [];
+  //   for (let i = 0; i < productDetail.length; i++) {
+  //     listArray.push(productDetail[i]);
+  //     if (listArray.length == 5) {
+  //       setIndex(5);
+  //       setIsLoader(false);
+  //       setAdmins(listArray);
+  //       return listArray;
+  //     }
+  //   }
+  // }
+
   const updateDetails = () => {
     console.log(updateAdmin);
   }
@@ -147,7 +231,7 @@ const AdminDetail = () => {
               input={{
                 type: "text",
                 value: adminDetail.company_name,
-                onChange: (e) => setAdminDetail({ company_name: e.target.value})
+                onChange: (e) => setAdminDetail({ company_name: e.target.value })
               }}
             />
             <Input
@@ -155,7 +239,7 @@ const AdminDetail = () => {
               input={{
                 type: "text",
                 value: adminDetail.first_name,
-                onChange: (e) => setAdminDetail({ first_name: e.target.value})
+                onChange: (e) => setAdminDetail({ first_name: e.target.value })
               }}
             />
             <Input
@@ -163,7 +247,7 @@ const AdminDetail = () => {
               input={{
                 type: "text",
                 value: adminDetail.last_name,
-                onChange: (e) => setAdminDetail({ last_name: e.target.value})
+                onChange: (e) => setAdminDetail({ last_name: e.target.value })
               }}
             />
             <Input
@@ -171,7 +255,7 @@ const AdminDetail = () => {
               input={{
                 type: "number",
                 value: adminDetail.phone,
-                onChange: (e) => setAdminDetail({ phone: e.target.value})
+                onChange: (e) => setAdminDetail({ phone: e.target.value })
               }}
             />
             <Input
@@ -179,7 +263,7 @@ const AdminDetail = () => {
               input={{
                 type: "email",
                 value: adminDetail.email,
-                onChange: (e) => setAdminDetail({ email: e.target.value})
+                onChange: (e) => setAdminDetail({ email: e.target.value })
               }}
             />
             <Input
@@ -187,7 +271,7 @@ const AdminDetail = () => {
               input={{
                 type: "text",
                 value: adminDetail.address,
-                onChange: (e) => setAdminDetail({ address: e.target.value})
+                onChange: (e) => setAdminDetail({ address: e.target.value })
               }}
             />
             <Input
@@ -297,24 +381,111 @@ const AdminDetail = () => {
         </form>
       </div>
 
-      {/* Products details */}
-      <div className={classes.productDetailContainer}>
-        {productDetail.length == 0 ? <h1>No Products</h1> :
-          productDetail.map((product) => {
-            return <div className={classes.products} key={product.id}>
-              <img src={`${configData.BASEURL}productImageByid?field=id&value=${product.id}`} alt={product.title} />
-              <input type="checkbox"/>
-              <div className={classes.productContent}>
-                <p>{product.title}</p>
-                <small>Rs {product.price}</small>
-                <span>
-                  <button>Edit</button>
-                  <button>Delete</button>
-                </span>
-              </div>
-            </div>
-          })}
+      <div className={classes.icons}>
+        <label>Sort By: </label>
+        <select>
+          <option value="ASC">A - Z</option>
+          <option value="DESC">Z - A</option>
+        </select>
+
+        <i className="fa fa-check-square-o" aria-hidden="true" onClick={selectAll} data-tip data-for="selectTip" />
+        <ReactTooltip id="selectTip" place="top" effect="solid">
+          Select / Deselect All
+              </ReactTooltip>
+
+        <i className="fa fa-trash-o" aria-hidden="true" onClick={deleteBulk} data-tip data-for="deleteTip" />
+        <ReactTooltip id="deleteTip" place="top" effect="solid">
+          Deleted Selected Products
+              </ReactTooltip>
+
+        {isGrid &&
+          <Fragment>
+            <i className="fa fa-list-ul" aria-hidden="true" onClick={() => setIsGrid(false)} data-tip data-for="listTip" />
+            <ReactTooltip id="listTip" place="top" effect="solid">
+              List View
+              </ReactTooltip>
+          </Fragment>
+        }
+
+        {!isGrid &&
+          <Fragment>
+            <i className="fa fa-th-large" aria-hidden="true" onClick={() => setIsGrid(true)} data-tip data-for="gridTip" />
+            <ReactTooltip id="gridTip" place="top" effect="solid">
+              Grid View
+              </ReactTooltip>
+          </Fragment>
+        }
+
       </div>
+
+      {/* Products details */}
+      {/* grid view */}
+      {isGrid &&
+        <div className={classes.productDetailContainer}>
+          {productDetail.length == 0 ? <h1>No Products</h1> :
+            productDetail.map((product) => {
+              return <div className={classes.products} key={product.id}>
+                <Fragment>
+                  <img src={`${configData.BASEURL}productImageByid?field=id&value=${product.id}`} alt={product.title} />
+                  <Input
+                    input={{
+                      type: "checkbox",
+                      name: "check",
+                      onChange: (e) => deleteSelectedProducts(e, product.id)
+                    }}
+                  />
+                  <div className={classes.productContent}>
+                    <p>{product.title}</p>
+                    <small>Rs {product.price}</small>
+                    <span>
+                      <button>Edit</button>
+                      <button>Delete</button>
+                    </span>
+                  </div>
+                </Fragment>
+              </div>
+            })}
+        </div>
+      }
+
+      {/* list view */}
+      {!isGrid &&
+        <div className={classes.listContainer}>
+          {productDetail.length == 0 ? <h1>No Products</h1> :
+            productDetail.map((product) => {
+              return <div className={classes.products} key={product.id}>
+                <Fragment>
+                  <img src={`${configData.BASEURL}productImageByid?field=id&value=${product.id}`} alt={product.title} />
+
+                  <div className={classes.productContent}>
+                    <p className={classes.ptitle}>{product.title}</p>
+                    <p>{product.detail}</p>
+                    <p>Quantity: {product.quantity}</p>
+                    <p>Offer: {product.offer}</p>
+                    <small>Rs {product.price}</small>
+                  </div>
+
+                  <span className={classes.btns}>
+                    <div className={classes.selection}>
+
+                      <Input
+                        input={{
+                          type: "checkbox",
+                          name: "check",
+                          onChange: (e) => deleteSelectedProducts(e, product.id)
+                        }}
+                      />
+                      <span>Select</span>
+                    </div>
+
+                    <button>Edit / Detail</button>
+                    <button>Delete</button>
+                  </span>
+                </Fragment>
+              </div>
+            })}
+        </div>
+      }
     </Fragment>
   )
 };

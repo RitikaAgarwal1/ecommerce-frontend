@@ -18,3 +18,23 @@ export const getProductsBySellerid = async (key, value) => {
         }
     });
 }
+
+export const deleteProductsBySelection = async (body) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const info = {
+                method: "delete",
+                url: `${configData.BASEURL}deleteBulkProducts`,
+                data: {
+                    "ids": body
+                }
+            }
+            let response = await axios(info);
+            //console.log(response.data);
+            resolve(response.data);
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}
