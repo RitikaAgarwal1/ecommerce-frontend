@@ -206,6 +206,29 @@ form.form {
             img{
                 box-shadow: 0 0 5px 1px rgb(100 101 101 / 32%);
                 margin-right: 40px;
+                background: #fff;
+                cursor: pointer;
+            }
+
+            img:hover + .overlay{
+                display: block;
+            }
+
+            .overlay{
+                width: 300px;
+                height: 300px;
+                position: absolute;
+                cursor: pointer;
+                display: none;
+
+                div{
+                    position: absolute;
+                    bottom: 0;
+                    text-align-last: center;
+                    width: 100%;
+                    background: #000;
+                    color: #fff;
+                }
             }
 
             .editProfile{
@@ -361,7 +384,7 @@ form.form {
 
             .productContent{
                 p{
-                    margin: 10px 0;
+                    margin: 6px 0;
                 }
                 .ptitle{
                     font-size: 22px;

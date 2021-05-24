@@ -16,7 +16,7 @@ const AdminDetail = () => {
   const { addToast } = useToasts();
   const isEmpty = (value) => value.trim() === '';
   const [isLoader, setIsLoader] = useState(true);
-  const [adminDetail, setAdminDetail] = useState([]);
+  const [adminDetail, setAdminDetail] = useState({});
   const [productDetail, setAdminProduct] = useState([]);
   const [check, setCheck] = useState(false);
   const [isGrid, setIsGrid] = useState(true);
@@ -35,6 +35,14 @@ const AdminDetail = () => {
   const categoryRef = useRef();
   const detailRef = useRef();
   const sizeRef = useRef();
+
+  const emailRef = useRef();
+  const fnameRef = useRef();
+  const lnameRef = useRef();
+  const addressRef = useRef();
+  const phoneRef = useRef();
+  const cnameRef = useRef();
+  const dateRef = useRef();
 
 
   useEffect(() => {
@@ -212,7 +220,16 @@ const AdminDetail = () => {
   // }
 
   const updateDetails = () => {
-    console.log(updateAdmin);
+    const updatedAdmin = {
+      email: emailRef.current.value,
+      first_name: fnameRef.current.value,
+      last_name: lnameRef.current.value,
+      address: addressRef.current.value,
+      phone: phoneRef.current.value,
+      company_name: cnameRef.current.value,
+      created_on: dateRef.current.value
+    }
+    console.log(updatedAdmin);
   }
 
   return (
@@ -221,64 +238,72 @@ const AdminDetail = () => {
       <div key={adminDetail.uuid} className={classes.detailContainer}>
         <span className={classes.head}>
           <h1>{adminDetail.company_name}'s Profile</h1>
-          <button>Update</button>
+          <button onClick={updateDetails}>Update</button>
         </span>
         <div className={classes.detailContent}>
           <img src={`${configData.BASEURL}userImageByUuid?field=uuid&value=${adminDetail.uuid}`} width="300px" height="300px" />
+          <div className={classes.overlay}>
+            <Input
+              input={{
+                type: "file"
+              }}
+            />
+          </div>
           <form className={classes.editProfile}>
             <Input
               label="Company Name:"
               input={{
                 type: "text",
-                value: adminDetail.company_name,
-                onChange: (e) => setAdminDetail({ company_name: e.target.value })
+                defaultValue: adminDetail.company_name,
+                ref: cnameRef
               }}
             />
             <Input
               label="First Name:"
               input={{
                 type: "text",
-                value: adminDetail.first_name,
-                onChange: (e) => setAdminDetail({ first_name: e.target.value })
+                defaultValue: adminDetail.first_name,
+                ref: fnameRef
               }}
             />
             <Input
               label="Last Name:"
               input={{
                 type: "text",
-                value: adminDetail.last_name,
-                onChange: (e) => setAdminDetail({ last_name: e.target.value })
+                defaultValue: adminDetail.last_name,
+                ref: lnameRef
               }}
             />
             <Input
               label="Phone Number:"
               input={{
                 type: "number",
-                value: adminDetail.phone,
-                onChange: (e) => setAdminDetail({ phone: e.target.value })
+                defaultValue: adminDetail.phone,
+                ref: phoneRef
               }}
             />
             <Input
               label="Email Address:"
               input={{
                 type: "email",
-                value: adminDetail.email,
-                onChange: (e) => setAdminDetail({ email: e.target.value })
+                defaultValue: adminDetail.email,
+                ref: emailRef
               }}
             />
             <Input
               label="Address:"
               input={{
                 type: "text",
-                value: adminDetail.address,
-                onChange: (e) => setAdminDetail({ address: e.target.value })
+                defaultValue: adminDetail.address,
+                ref: addressRef
               }}
             />
             <Input
               label="Created On:"
               input={{
                 type: "text",
-                value: formattedDate(adminDetail.created_on),
+                defaultValue: formattedDate(adminDetail.created_on),
+                ref: dateRef,
                 disabled: true
               }}
             />
@@ -462,6 +487,7 @@ const AdminDetail = () => {
                     <p>{product.detail}</p>
                     <p>Quantity: {product.quantity}</p>
                     <p>Offer: {product.offer}</p>
+                    <p>Tags: {product.category}</p>
                     <small>Rs {product.price}</small>
                   </div>
 
