@@ -8,6 +8,7 @@ import axios from 'axios';
 import configData from "../../config/config.json";
 import { getUserDetailsByKey, deleteUser, deleteUsersBySelection } from "../../services/authService";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
+import {filterFromData} from "../../services/commonService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { registration } from "../../services/authService";
@@ -23,17 +24,14 @@ const Admin = props => {
   const [admins, setAdmins] = useState(null);
   const [totalAdmins, setTotalAdmins] = useState(null);
   const [isLoader, setIsLoader] = useState(true);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [index, setIndex] = useState(0);
-  const [showNext, setShowNext] = useState(true);
-  const [showPrev, setShowPrev] = useState(false);
-  const [size, setSize] = useState(0);
+  const [offsetValue, setOffset] = useState(0);
   const [orderByRequest, setOrder] = useState('');
   const [check, setCheck] = useState(false);
+  const [showLoadBtn, setLoadBtn] = useState(true);
 
   useEffect(() => {
-    fetchUsers('user_role', 'ADMIN');
+    setOffset(0);
+    fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
   }, []);
 
   let banner = "";
@@ -256,101 +254,41 @@ const Admin = props => {
     }
   }
 
-  const fetchUsers = async (key, value) => {
+  const fetchUsers = async (key, value, order_by, direction, limit, offset) => {
     try {
-      window.addEventListener('load', checkAll, false);
+      const result = await getUserDetailsByKey(key, value, order_by, direction, limit, offset);
+      result.length < 5? setLoadBtn(false): setLoadBtn(true);
       setIsLoader(true);
-      setCurrentPage(1);
-      const listArray = [];
-      setShowNext(true);
-      setShowPrev(false);
-      const result = await getUserDetailsByKey(key, value);
-      setTotalAdmins(result);
-      //console.log(result);
-      const total = Math.max(Math.ceil(result.length / 5), 1);
-      setTotalPages(total);
-      result.sort(dynamicSort("company_name", 'ASC'));
-      for (let i = 0; i < result.length; i++) {
-        listArray.push(result[i]);
-        if (listArray.length == 5) {
-          //console.log(listArray);
-          setIndex(5);
-          setIsLoader(false);
-          setAdmins(listArray);
-          return false;
-        }
-      }
-      sortAdmins();
       setAdmins(result);
+      setOffset(5);
+      //console.log(result);
       setIsLoader(false);
+      window.addEventListener('load', checkAll, false);
     } catch (error) {
       console.log(error);
       setIsLoader(false);
     }
   }
 
-  const next = () => {
-    window.addEventListener('load', checkAll, false);
-    if (currentPage != totalPages) {
-      const pagenumber = currentPage + 1;
-      setCurrentPage(pagenumber);
+  const loadmore = async () => {
+    setIsLoader(true);
+    let newArr = admins;
+    try {
+      const result = await getUserDetailsByKey('user_role', 'ADMIN', 'company_name', orderByRequest, 5, offsetValue);
+      result.length < 5? setLoadBtn(false): setLoadBtn(true);
+      result.forEach((el) => {
+        newArr.push(el);
+      });
+      setAdmins(newArr);
+      //console.log(result);
+      const o = offsetValue;
+      setOffset(o + 5);
+      setIsLoader(false);
+      window.addEventListener('load', checkAll, false);
+    } catch (err) {
+      console.log(err);
+      setIsLoader(false);
     }
-    if (totalPages == currentPage + 1) {
-      setIndex(totalAdmins.length);
-      setShowNext(false);
-      setShowPrev(true);
-    }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setAdmins([]);
-    const listArray = [];
-    let i;
-    totalAdmins.sort(dynamicSort('company_name', orderByRequest));
-    for (i = index; i < totalAdmins.length; i++) {
-      listArray.push(totalAdmins[i]);
-      if (listArray.length == 5) {
-        //console.log(listArray);
-        setIndex(i + 1);
-        setAdmins(listArray);
-        return false;
-      }
-    }
-    //console.log(listArray);
-    setAdmins(listArray);
-    const pagenumber = currentPage + 1;
-    setCurrentPage(pagenumber);
-    setSize(listArray.length);
-  }
-
-  const prev = () => {
-    window.addEventListener('load', checkAll, false);
-    if (currentPage >= 2) {
-      const pagenumber = currentPage - 1;
-      setCurrentPage(pagenumber);
-    }
-    if (currentPage <= 2) {
-      setShowPrev(false);
-    }
-    setShowNext(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    setAdmins([]);
-    const listArray = [];
-    let i;
-    totalAdmins.sort(dynamicSort('company_name', orderByRequest));
-    for (i = index - (size + 1); i >= 0; i--) {
-      listArray.push(totalAdmins[i]);
-      if (listArray.length == 5) {
-        //console.log(listArray);
-        setAdmins(listArray.reverse());
-        setShowPrev(false);
-        if (i == 0) {
-          setIndex(5);
-        }
-        return false;
-      }
-      setIndex(i);
-    }
-    //console.log(listArray);
-    setAdmins(listArray.reverse());
   }
 
   const deleteUserById = async (id) => {
@@ -376,75 +314,52 @@ const Admin = props => {
     }
   }
 
-  const dynamicSort = (property, order) => {
-    var sortOrder = 1;
-    if (property[0] === "-") {
-      sortOrder = -1;
-      property = property.substr(1);
-    }
-    return function (a, b) {
-      /* next line works with strings and numbers, 
-       * and you may want to customize it to your needs
-       */
-      if (order == 'ASC' || null) {
-        var result = (a[property].toLowerCase() < b[property].toLowerCase()) ? -1 : (a[property].toLowerCase() > b[property].toLowerCase()) ? 1 : 0;
-        return result * sortOrder;
+  // const dynamicSort = (property, order) => {
+  //   var sortOrder = 1;
+  //   if (property[0] === "-") {
+  //     sortOrder = -1;
+  //     property = property.substr(1);
+  //   }
+  //   return function (a, b) {
+  //     /* next line works with strings and numbers, 
+  //      * and you may want to customize it to your needs
+  //      */
+  //     if (order == 'ASC' || null) {
+  //       var result = (a[property].toLowerCase() < b[property].toLowerCase()) ? -1 : (a[property].toLowerCase() > b[property].toLowerCase()) ? 1 : 0;
+  //       return result * sortOrder;
 
-      } else if (order == 'DESC') {
-        var result = (a[property].toLowerCase() > b[property].toLowerCase()) ? -1 : (a[property].toLowerCase() < b[property].toLowerCase()) ? 1 : 0;
-        return result * sortOrder;
-      }
+  //     } else if (order == 'DESC') {
+  //       var result = (a[property].toLowerCase() > b[property].toLowerCase()) ? -1 : (a[property].toLowerCase() < b[property].toLowerCase()) ? 1 : 0;
+  //       return result * sortOrder;
+  //     }
 
-    }
-  }
+  //   }
+  // }
 
   const sortAdmins = (event) => {
-    setIsLoader(true);
-    setCurrentPage(1);
-    setShowNext(true);
-    setShowPrev(false);
     const order = event.target.value;
+    fetchUsers('user_role', 'ADMIN', 'company_name', order, 5, 0);
     setOrder(order);
-    totalAdmins.sort(dynamicSort("company_name", order));
-    const listArray = [];
-    for (let i = 0; i < totalAdmins.length; i++) {
-      listArray.push(totalAdmins[i]);
-      if (listArray.length == 5) {
-        setIndex(5);
-        setIsLoader(false);
-        setAdmins(listArray);
-        return listArray;
-      }
-    }
   }
 
-  const filterData = (event) => {
-    if (!totalAdmins) {
+  const filterData = async (event) => {
+    if (!admins) {
       addToast("There is no data to search from", {
         appearance: 'error',
         autoDismiss: true,
         placement: "bottom-center"
       });
     } else {
-      let adminArray = totalAdmins.filter(x => x.company_name.toLowerCase().includes(event.target.value.toLowerCase()));
-
-      if (event.target.value !== "") {
-        setAdmins(adminArray);
-        setShowPrev(false);
-        setShowNext(false);
-      } else if (event.target.value == "") {
-        let listArray = [];
-        for (let i = 0; i < totalAdmins.length; i++) {
-          listArray.push(totalAdmins[i]);
-          if (listArray.length == 5) {
-            setIndex(5);
-            setIsLoader(false);
-            setShowNext(true);
-            setAdmins(listArray);
-            setCurrentPage(1);
-            return listArray;
-          }
+      try{
+        let result = await filterFromData('users', event.target.value.toLowerCase());
+        if (event.target.value !== ""){
+          setAdmins(result);
+        } else if (event.target.value == "") {
+          fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
         }
+        //console.log(result);
+      } catch (err){
+        console.log(err);
       }
     }
   }
@@ -646,16 +561,9 @@ const Admin = props => {
                 </div>
               </Fragment>
             })};
-            <div className={classes.pagination}>
-            {showPrev &&
-              <span onClick={prev} className={classes.navigate}>Previous | </span>
+            {showLoadBtn && 
+              <button onClick={loadmore}>Load More Admin...</button>
             }
-             Current Page: {currentPage} | Total Pages: {totalPages}
-
-            {showNext &&
-              <span onClick={next} className={classes.navigate}> | Next </span>
-            }
-          </div>
         </div>
       </div>
     </Fragment>

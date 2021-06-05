@@ -59,12 +59,20 @@ export const registration = async (body) => {
     });
 };
 
-export const getUserDetailsByKey = async (key, value) => {
+export const getUserDetailsByKey = async (key, value, order_by, direction, limit, offset) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const info = {
-                method: "get",
-                url: `${configData.BASEURL}userDetails?field=${key}&value=${value}`
+            let info = {};
+            if (order_by == undefined && direction == undefined && limit == undefined && offset == undefined) {
+                info = {
+                    method: "get",
+                    url: `${configData.BASEURL}userDetails?field=${key}&value=${value}`
+                }
+            } else {
+                info = {
+                    method: "get",
+                    url: `${configData.BASEURL}userDetails?field=${key}&value=${value}&order_by=${order_by}&order=${direction}&limit=${limit}&offset=${offset}`
+                }
             }
             let response = await axios(info);
             //console.log(response);

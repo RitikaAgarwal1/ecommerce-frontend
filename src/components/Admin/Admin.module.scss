@@ -154,7 +154,7 @@ form.form {
                 margin-left: auto;
                 align-self: center;
 
-                .selection{
+                .selection, .listContainer .selection{
                     display: flex;
                     border: 1px solid $primary-color;
                     padding: 5px 0;
@@ -172,7 +172,7 @@ form.form {
                     }
                 }
 
-                button {
+                button, .listContainer button {
                     width: 99px;
                     justify-content: center;
                 }
@@ -352,17 +352,30 @@ form.form {
         }
     }
 
-    .icons{
-        text-align: right;
-        margin: 0 10px 10px 0;
-        i{
-            cursor: pointer;
-            margin-left: 10px;
-            font-size: 20px;
-            color: #a7a7a7;
+    .productHeader{
+        padding: 0 2%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1%;
 
-            &:hover{
-                color: $secondary-color;
+        select, input{
+            padding: 5px 10px;
+            outline: none;
+            border: 1px solid #c7c7c7;
+            color: $secondary-color;
+        }
+
+        .icons{
+            i{
+                cursor: pointer;
+                margin-left: 10px;
+                font-size: 20px;
+                color: #a7a7a7;
+    
+                &:hover{
+                    color: $secondary-color;
+                }
             }
         }
     }
@@ -402,23 +415,23 @@ form.form {
                 margin-left: auto;
                 align-self: center;
 
-                .selection{
-                    display: flex;
-                    border: 1px solid #c2d44e;
-                    padding: 5px 0;
-                    font-size: 14px;
-                    justify-content: space-between;
-                    position: relative;
-                }
+                // .selection{
+                //     display: flex;
+                //     border: 1px solid #c2d44e;
+                //     padding: 5px 0;
+                //     font-size: 14px;
+                //     justify-content: space-between;
+                //     position: relative;
+                // }
 
                 span{
                     margin: 2px 26px 0 0;
                 }
 
-                button{
-                    width: 99px;
-                    justify-content: center;
-                }
+                // button{
+                //     width: 99px;
+                //     justify-content: center;
+                // }
             }
         }
     }

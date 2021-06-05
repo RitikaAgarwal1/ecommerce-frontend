@@ -199,25 +199,27 @@ const AdminDetail = () => {
     }
   }
 
-  // const sortAdmins = (event) => {
-  //   setIsLoader(true);
-  //   //setCurrentPage(1);
-  //   //setShowNext(true);
-  //   //setShowPrev(false);
-  //   const order = event.target.value;
-  //   setOrder(order);
-  //   productDetail.sort(dynamicSort("title", order));
-  //   const listArray = [];
-  //   for (let i = 0; i < productDetail.length; i++) {
-  //     listArray.push(productDetail[i]);
-  //     if (listArray.length == 5) {
-  //       setIndex(5);
-  //       setIsLoader(false);
-  //       setAdmins(listArray);
-  //       return listArray;
-  //     }
-  //   }
-  // }
+  const filterData = async (event) => {
+    // if (!admins) {
+    //   addToast("There is no data to search from", {
+    //     appearance: 'error',
+    //     autoDismiss: true,
+    //     placement: "bottom-center"
+    //   });
+    // } else {
+    //   try{
+    //     let result = await filterFromData('users', event.target.value.toLowerCase());
+    //     if (event.target.value !== ""){
+    //       setAdmins(result);
+    //     } else if (event.target.value == "") {
+    //       fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
+    //     }
+    //     //console.log(result);
+    //   } catch (err){
+    //     console.log(err);
+    //   }
+    // }
+  }
 
   const updateDetails = () => {
     const updatedAdmin = {
@@ -406,41 +408,52 @@ const AdminDetail = () => {
         </form>
       </div>
 
-      <div className={classes.icons}>
-        <label>Sort By: </label>
-        <select>
-          <option value="ASC">A - Z</option>
-          <option value="DESC">Z - A</option>
-        </select>
+      <div className={classes.productHeader}>
+        <Input
+          label="Filter By "
+          input={{
+            type: "text",
+            placeholder: "Company Name",
+            onChange: filterData
+          }}
+        />
 
-        <i className="fa fa-check-square-o" aria-hidden="true" onClick={selectAll} data-tip data-for="selectTip" />
-        <ReactTooltip id="selectTip" place="top" effect="solid">
-          Select / Deselect All
+        <div className={classes.icons}>
+          <label>Sort By: </label>
+          <select>
+            <option value="ASC">A - Z</option>
+            <option value="DESC">Z - A</option>
+          </select>
+
+          <i className="fa fa-check-square-o" aria-hidden="true" onClick={selectAll} data-tip data-for="selectTip" />
+          <ReactTooltip id="selectTip" place="top" effect="solid">
+            Select / Deselect All
               </ReactTooltip>
 
-        <i className="fa fa-trash-o" aria-hidden="true" onClick={deleteBulk} data-tip data-for="deleteTip" />
-        <ReactTooltip id="deleteTip" place="top" effect="solid">
-          Deleted Selected Products
+          <i className="fa fa-trash-o" aria-hidden="true" onClick={deleteBulk} data-tip data-for="deleteTip" />
+          <ReactTooltip id="deleteTip" place="top" effect="solid">
+            Deleted Selected Products
               </ReactTooltip>
 
-        {isGrid &&
-          <Fragment>
-            <i className="fa fa-list-ul" aria-hidden="true" onClick={() => setIsGrid(false)} data-tip data-for="listTip" />
-            <ReactTooltip id="listTip" place="top" effect="solid">
-              List View
+          {isGrid &&
+            <Fragment>
+              <i className="fa fa-list-ul" aria-hidden="true" onClick={() => setIsGrid(false)} data-tip data-for="listTip" />
+              <ReactTooltip id="listTip" place="top" effect="solid">
+                List View
               </ReactTooltip>
-          </Fragment>
-        }
+            </Fragment>
+          }
 
-        {!isGrid &&
-          <Fragment>
-            <i className="fa fa-th-large" aria-hidden="true" onClick={() => setIsGrid(true)} data-tip data-for="gridTip" />
-            <ReactTooltip id="gridTip" place="top" effect="solid">
-              Grid View
+          {!isGrid &&
+            <Fragment>
+              <i className="fa fa-th-large" aria-hidden="true" onClick={() => setIsGrid(true)} data-tip data-for="gridTip" />
+              <ReactTooltip id="gridTip" place="top" effect="solid">
+                Grid View
               </ReactTooltip>
-          </Fragment>
-        }
+            </Fragment>
+          }
 
+        </div>
       </div>
 
       {/* Products details */}
