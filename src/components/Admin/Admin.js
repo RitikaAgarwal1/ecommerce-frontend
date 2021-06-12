@@ -96,6 +96,7 @@ const Admin = props => {
         autoDismiss: true,
         placement: "bottom-center"
       });
+      setIsLoader(false);
     } else {
       await axios.post(`${configData.BASEURL}register`, data).then(res => {
         const templateParams = {
