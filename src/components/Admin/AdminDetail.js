@@ -11,6 +11,7 @@ import formattedDate from "../../Utils/Utils";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import ReactTooltip from "react-tooltip";
+import emailjs from 'emailjs-com';
 
 const AdminDetail = () => {
   const { addToast } = useToasts();
@@ -221,7 +222,7 @@ const AdminDetail = () => {
     // }
   }
 
-  const updateDetails = () => {
+  const updateDetails = async () => {
     const updatedAdmin = {
       email: emailRef.current.value,
       first_name: fnameRef.current.value,

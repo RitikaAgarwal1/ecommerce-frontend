@@ -8,14 +8,14 @@ import axios from 'axios';
 import configData from "../../config/config.json";
 import { getUserDetailsByKey, deleteUser, deleteUsersBySelection } from "../../services/authService";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
-import {filterFromData} from "../../services/commonService";
+import { filterFromData } from "../../services/commonService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { registration } from "../../services/authService";
 import formattedDate from "../../Utils/Utils";
 import Loader from "../../Loader/Loader";
-import ReactPaginate from 'react-paginate';
 import ReactTooltip from "react-tooltip";
+import emailjs from 'emailjs-com';
 
 const Admin = props => {
 
@@ -98,7 +98,19 @@ const Admin = props => {
       });
     } else {
       await axios.post(`${configData.BASEURL}register`, data).then(res => {
-        location.reload();
+        const templateParams = {
+          mail_to: register.email,
+          to_name: `${register.first_name} ${register.last_name}`,
+          message: `You got registered in Ecommerce. Your password is ${register.pwd}.`
+        };
+
+        emailjs.send('gmail', 'template_r5jyzah', templateParams, 'user_dejuwuxkV94TpECl8aYZh')
+          .then((result) => {
+            console.log(result.text);
+          }, (error) => {
+            console.log(error.text);
+          });
+
         setIsLoader(false);
         console.log('register', res);
         addToast("Successfully registered", {
@@ -107,7 +119,7 @@ const Admin = props => {
           placement: "bottom-center"
         });
 
-        fetchUsers('user_role', 'ADMIN');
+        fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
 
       }).catch(err => {
         console.log(err);
@@ -257,7 +269,7 @@ const Admin = props => {
   const fetchUsers = async (key, value, order_by, direction, limit, offset) => {
     try {
       const result = await getUserDetailsByKey(key, value, order_by, direction, limit, offset);
-      result.length < 5? setLoadBtn(false): setLoadBtn(true);
+      result.length < 5 ? setLoadBtn(false) : setLoadBtn(true);
       setIsLoader(true);
       setAdmins(result);
       setOffset(5);
@@ -275,7 +287,7 @@ const Admin = props => {
     let newArr = admins;
     try {
       const result = await getUserDetailsByKey('user_role', 'ADMIN', 'company_name', orderByRequest, 5, offsetValue);
-      result.length < 5? setLoadBtn(false): setLoadBtn(true);
+      result.length < 5 ? setLoadBtn(false) : setLoadBtn(true);
       result.forEach((el) => {
         newArr.push(el);
       });
@@ -350,15 +362,15 @@ const Admin = props => {
         placement: "bottom-center"
       });
     } else {
-      try{
+      try {
         let result = await filterFromData('users', event.target.value.toLowerCase());
-        if (event.target.value !== ""){
+        if (event.target.value !== "") {
           setAdmins(result);
         } else if (event.target.value == "") {
           fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
         }
         //console.log(result);
-      } catch (err){
+      } catch (err) {
         console.log(err);
       }
     }
@@ -561,9 +573,9 @@ const Admin = props => {
                 </div>
               </Fragment>
             })};
-            {showLoadBtn && 
-              <button onClick={loadmore}>Load More Admin...</button>
-            }
+            {showLoadBtn &&
+            <button onClick={loadmore}>Load More Admin...</button>
+          }
         </div>
       </div>
     </Fragment>
