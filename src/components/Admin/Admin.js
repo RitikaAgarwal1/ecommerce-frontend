@@ -8,21 +8,19 @@ import axios from 'axios';
 import configData from "../../config/config.json";
 import { getUserDetailsByKey, deleteUser, deleteUsersBySelection } from "../../services/authService";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
-import { filterFromData } from "../../services/commonService";
+import { filterFromData, sendEmail } from "../../services/commonService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { registration } from "../../services/authService";
-import formattedDate from "../../Utils/Utils";
+import {formattedDate, titleCase} from "../../Utils/Utils";
 import Loader from "../../Loader/Loader";
 import ReactTooltip from "react-tooltip";
-import emailjs from 'emailjs-com';
 
 const Admin = props => {
 
   const { addToast } = useToasts();
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [admins, setAdmins] = useState(null);
-  const [totalAdmins, setTotalAdmins] = useState(null);
   const [isLoader, setIsLoader] = useState(true);
   const [offsetValue, setOffset] = useState(0);
   const [orderByRequest, setOrder] = useState('');
@@ -98,22 +96,33 @@ const Admin = props => {
       });
       setIsLoader(false);
     } else {
-      await axios.post(`${configData.BASEURL}register`, data).then(res => {
-        const templateParams = {
-          mail_to: register.email,
-          to_name: `${register.first_name} ${register.last_name}`,
-          message: `You got registered in Ecommerce. Your password is ${register.pwd}.`
-        };
-
-        emailjs.send('gmail', 'template_r5jyzah', templateParams, 'user_dejuwuxkV94TpECl8aYZh')
-          .then((result) => {
-            console.log(result.text);
-          }, (error) => {
-            console.log(error.text);
-          });
+      // await axios.post(`${configData.BASEURL}register`, data).then (async res => {
+        const info = {
+          content: `<div style="width: 100%;background:#eee;padding:1%;">
+                    <div style="border: 2px solid #c2d44e;color:#646565;width: 650px;margin: auto;font-family: system-ui;">
+                    <header style="background:#fff;">
+                    <h1 style="text-align:center;font-weight: 100;margin: 0;background:#fff;">
+                    <span style="color: #c2d44e;font-size:150%;">E</span>commerce</h1>
+                    </header>
+                    <section style="background: #c2d44e;padding:1%;">
+                    <h1 style="font-size: 28px;border-bottom: 1px solid #646565;font-weight:100;">Congratulations!</h1>
+                    <p style="font-size: 16px;">Hi ${titleCase(register.first_name)}, <br><br>
+                    ${titleCase(register.company_name)} have successfully been registered to Ecommerce. 
+                    <br>The auto generated password is ${register.pwd}. 
+                    <br>You may change the password.</p>
+                    <p><br>Thank You</p>
+                    <small>Sent by Ecommerce</small>
+                    </section>
+                    </div>
+                    </div>`,
+          email: register.email,
+          subject: `Welcome to Ecommerce! We have registered you`
+        }
+        const mailResponse = await sendEmail(info);
+        //console.log(mailResponse);
 
         setIsLoader(false);
-        console.log('register', res);
+        console.log('register');
         addToast("Successfully registered", {
           appearance: 'success',
           autoDismiss: true,
@@ -122,15 +131,15 @@ const Admin = props => {
 
         fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
 
-      }).catch(err => {
-        console.log(err);
-        setIsLoader(false);
-        addToast("Data is not properly filled up!", {
-          appearance: 'error',
-          autoDismiss: true,
-          placement: "bottom-center"
-        });
-      });
+      // }).catch(err => {
+      //   console.log(err);
+      //   setIsLoader(false);
+      //   addToast("Data is not properly filled up!", {
+      //     appearance: 'error',
+      //     autoDismiss: true,
+      //     placement: "bottom-center"
+      //   });
+      // });
     }
   }
 

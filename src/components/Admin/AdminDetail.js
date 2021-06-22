@@ -7,7 +7,7 @@ import Loader from "../../Loader/Loader";
 import { getUserDetailsByKey } from "../../services/authService";
 import { getProductsBySellerid, deleteProductsBySelection } from "../../services/productService";
 import configData from "../../config/config.json";
-import formattedDate from "../../Utils/Utils";
+import {formattedDate} from "../../Utils/Utils";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import ReactTooltip from "react-tooltip";

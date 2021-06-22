@@ -18,3 +18,22 @@ export const filterFromData = async (tableName, value) => {
         }
     });
 }
+
+export const sendEmail = async (body) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const info = {
+                method: "post",
+                url: `${configData.BASEURL}sendMail`,
+                data: body
+            }
+            let response = await axios(info);
+            //console.log(response);
+            resolve(response.data);
+
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+}
