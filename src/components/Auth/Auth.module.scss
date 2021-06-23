@@ -36,6 +36,17 @@
             outline: none;
         }
     }
+    .fpwd{
+        display: block;
+        text-align: center;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 11px;
+
+        &:hover{
+            text-decoration: underline;
+        }
+    }
 }
 
 .btn{
@@ -47,5 +58,34 @@
         margin:unset;
         display: inline;
         margin: 0 10px;
-    }  
+    } 
+}
+
+// forgot password screen
+.passContainer{
+    background: url('../../assets/bg.JPG');
+    background-repeat: no-repeat;
+    width:99%;
+    height:87vh;
+
+    .overlay{
+        background:rgba(0,0,0,.56);
+        position: fixed;
+        top:0;
+        bottom:0;
+        width: 100%;
+        z-index: 1;
+
+        .modal{
+            width: 40rem;
+            left: calc(50% - 20rem);
+            position: fixed;
+            top: 20vh;
+            background: #fff;
+            border: 5px solid #c2d44e;
+            padding: 1rem;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgb(0 0 0 / 25%);
+        }
+    }
 }

@@ -99,21 +99,24 @@ const Admin = props => {
       await axios.post(`${configData.BASEURL}register`, data).then (async res => {
         const info = {
           content: `<div style="width: 100%;background:#eee;padding:1%;">
-                    <div style="border: 2px solid #c2d44e;color:#646565;width: 650px;margin: auto;font-family: system-ui;">
-                    <header style="background:#fff;">
-                    <h1 style="text-align:center;font-weight: 100;margin: 0;background:#fff;">
-                    <span style="color: #c2d44e;font-size:150%;">E</span>commerce</h1>
-                    </header>
-                    <section style="background: #c2d44e;padding:1%;">
-                    <h1 style="font-size: 28px;border-bottom: 1px solid #646565;font-weight:100;">Congratulations!</h1>
-                    <p style="font-size: 16px;">Hi ${titleCase(register.first_name)}, <br><br>
-                    ${titleCase(register.company_name)} have successfully been registered to Ecommerce. 
-                    <br>The auto generated password is ${register.pwd}. 
-                    <br>You may change the password.</p>
-                    <p><br>Thank You</p>
-                    <small>Sent by Ecommerce</small>
-                    </section>
-                    </div>
+                      <div style="border: 2px solid #c2d44e;color:#646565;width: 650px;margin: auto;font-family: system-ui;">
+                        <header style="background:#fff;">
+                          <h1 style="text-align:center;font-weight: 100;margin: 0;background:#fff;">
+                          <span style="color: #c2d44e;font-size:150%;">E</span>commerce</h1>
+                        </header>
+                        <section style="background: #c2d44e;padding:1%;">
+                          <h1 style="font-size: 28px;border-bottom: 1px solid #646565;font-weight:100;">Congratulations!</h1>
+                          <p style="font-size: 18px;">Hi ${titleCase(register.first_name)}, <br><br>
+                          ${titleCase(register.company_name)} have successfully been registered to Ecommerce. 
+                          <br>The auto generated password is ${register.pwd}. 
+                          <br>You may change the password or get started.</p>
+                          <div>
+                            <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/forgot-password" style="color: #333;    text-decoration: none;">Change Password</a></button>
+                            <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend" style="color: #333;    text-decoration: none;">Get Started</a></button>
+                          </div>
+                          <small><br>Thank You <br>Sent by Ecommerce</small>
+                        </section>
+                      </div>
                     </div>`,
           email: register.email,
           subject: `Welcome to Ecommerce! We have registered you`
@@ -122,7 +125,6 @@ const Admin = props => {
         //console.log(mailResponse);
 
         setIsLoader(false);
-        console.log('register');
         addToast("Successfully registered", {
           appearance: 'success',
           autoDismiss: true,

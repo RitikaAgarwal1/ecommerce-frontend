@@ -4,7 +4,7 @@ import { Fragment } from "react";
 import Modal from "../../UI/Modal";
 import classes from "./Auth.module.scss";
 import { useToasts } from 'react-toast-notifications';
-import { login, registration } from "../../services/authService";
+import { login, registration, getUserDetailsByKey } from "../../services/authService";
 import axios from 'axios';
 import configData from "../../config/config.json";
 
@@ -12,6 +12,7 @@ const Auth = props => {
     const { addToast } = useToasts();
     const [isAdmin, setIsAdmin] = useState('');
     const [isToggle, setIsToggle] = useState('Show Password');
+    const [isForgot, setIsForgot] = useState(false);
     let data = new FormData();
 
     const isEmpty = (value) => value.trim() === '';
@@ -26,6 +27,7 @@ const Auth = props => {
     const phoneRef = useRef();
     const cnameRef = useRef();
     const roleRef = useRef();
+    const femailRef = useRef();
 
     const authUser = async (event) => {
         event.preventDefault();
@@ -35,7 +37,7 @@ const Auth = props => {
                 password: passRef.current.value
             }
 
-            if (isEmpty(signIn.email && signIn.password) || !isEmail(signIn.email)) {
+            if (isEmpty(signIn.email && signIn.password) || !isEmail(signIn.email) || isPhone(signIn.password)) {
                 addToast("Email id or password is either empty or not valid!", {
                     appearance: 'error',
                     autoDismiss: true,
@@ -146,11 +148,33 @@ const Auth = props => {
             x.type = "password";
             setIsToggle('Show Password');
         }
-    }
+    };
+
+    const forgotPass = async(event) => {
+        event.preventDefault();
+        const response = await getUserDetailsByKey('email', femailRef.current.value);
+        if (response.length == 0){
+            addToast("Sorry! This email id is not registered", {
+                appearance: 'error',
+                autoDismiss: true,
+                placement: "bottom-center"
+            });
+            return false;
+        }
+        if (response[0].user_role == 'SUPERADMIN') response[0].user_role = 'ADMIN';
+        if (props.modalContent != response[0].user_role){
+            addToast("Please request from correct user role", {
+                appearance: 'error',
+                autoDismiss: true,
+                placement: "bottom-center"
+            });
+            return false;
+        }
+    };
 
     return (
         <Modal>
-            {props.modalContent === 'REGISTER' &&
+            {props.modalContent === 'REGISTER' && !isForgot &&
                 <form className={classes.authForm}>
                     <h1>Register</h1>
                     <Input
@@ -229,8 +253,7 @@ const Auth = props => {
 
             {/* for sigin in */}
 
-            {
-                props.modalContent !== 'REGISTER' &&
+            {props.modalContent !== 'REGISTER' && !isForgot &&
                 <form className={classes.authForm}>
                     <h1>Sign in as <span className={classes.lower}>{props.modalContent}</span></h1>
                     <Input
@@ -252,6 +275,25 @@ const Auth = props => {
                     <div className={classes.btn}>
                         <button onClick={props.onClose}>Cancel</button>
                         <button onClick={authUser} >Sign in</button>
+                    </div>
+                    <small className={classes.fpwd} onClick={()=>setIsForgot(true)}>Change / Forgot Password</small>
+                </form>
+            }
+
+            {props.modalContent !== 'REGISTER' && isForgot &&
+                <form className={classes.authForm}>
+                    <h1>Forgot your password?</h1>
+                    <Input
+                        label="Email Address"
+                        input={{
+                            type: "email",
+                            ref: femailRef
+                        }}
+                    />
+                    <div className={classes.btn}>
+                        <button onClick={()=>setIsForgot(false)}>Back</button>
+                        <button onClick={props.onClose}>Cancel</button>
+                        <button onClick={forgotPass}>Change Password</button>
                     </div>
                 </form>
             }
