@@ -176,6 +176,13 @@ const Auth = props => {
         history.replace(path);
     };
 
+    const triggerEvent = (event) => {
+        if (event.keyCode == 13) {
+            console.log(event.target.value, 'trigger');
+            authUser(event);
+        }
+    };
+
     return (
         <Modal>
             {props.modalContent === 'REGISTER' && !isForgot &&
@@ -249,7 +256,7 @@ const Auth = props => {
                     }
 
                     <div className={classes.btn}>
-                        <button onClick={props.onClose}>Cancel</button>
+                        <button type="button" onClick={props.onClose}>Cancel</button>
                         <button onClick={authUser}>Submit</button>
                     </div>
                 </form>
@@ -272,12 +279,13 @@ const Auth = props => {
                         input={{
                             type: "password",
                             ref: passRef,
-                            id: "pass"
+                            id: "pass",
+                            onKeyUp: (event) => triggerEvent(event)
                         }}
                     />
                     <small className={classes.info} onClick={showPassword}>{isToggle}</small>
                     <div className={classes.btn}>
-                        <button onClick={props.onClose}>Cancel</button>
+                        <button type="button" onClick={props.onClose}>Cancel</button>
                         <button onClick={authUser} >Sign in</button>
                     </div>
                     <small className={classes.fpwd} onClick={() => setIsForgot(true)}>Change / Forgot Password</small>
@@ -296,7 +304,7 @@ const Auth = props => {
                     />
                     <div className={classes.btn}>
                         <button onClick={() => setIsForgot(false)}>Back</button>
-                        <button onClick={props.onClose}>Cancel</button>
+                        <button type="button" onClick={props.onClose}>Cancel</button>
                         <button onClick={forgotPass}>Change Password</button>
                     </div>
                 </form>

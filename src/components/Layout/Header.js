@@ -33,7 +33,7 @@ const Header = props => {
   return (
     <Fragment>
       <header>
-        <h1><NavLink to="/ecommerce-frontend">Ecommerce</NavLink></h1>
+        <h1><NavLink to="/">Ecommerce</NavLink></h1>
 
         <div>
           {isAdmin == 'SUPERADMIN' &&
@@ -96,7 +96,7 @@ const Header = props => {
               </NavLink>
             </li>
             {isLogin &&
-              <Link to="/ecommerce-frontend"><li onClick={signout}>Logout</li></Link>
+              <Link to="/"><li onClick={signout}>Logout</li></Link>
             }
 
           </ul>

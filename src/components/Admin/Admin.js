@@ -12,7 +12,7 @@ import { filterFromData, sendEmail } from "../../services/commonService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { registration } from "../../services/authService";
-import {formattedDate, titleCase} from "../../Utils/Utils";
+import { formattedDate, titleCase } from "../../Utils/Utils";
 import Loader from "../../Loader/Loader";
 import ReactTooltip from "react-tooltip";
 
@@ -96,7 +96,7 @@ const Admin = props => {
       });
       setIsLoader(false);
     } else {
-      // await axios.post(`${configData.BASEURL}register`, data).then (async res => {
+      await axios.post(`${configData.BASEURL}register`, data).then(async res => {
         const forgotPasswordUrl = `https://ritikaagarwal1.github.io/ecommerce-frontend/#/forgot-password/${register.email}`;
         const info = {
           content: `<div style="width: 100%;background:#eee;padding:1%;">
@@ -134,15 +134,15 @@ const Admin = props => {
 
         fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
 
-      // }).catch(err => {
-      //   console.log(err);
-      //   setIsLoader(false);
-      //   addToast("Data is not properly filled up!", {
-      //     appearance: 'error',
-      //     autoDismiss: true,
-      //     placement: "bottom-center"
-      //   });
-      // });
+      }).catch(err => {
+        console.log(err);
+        setIsLoader(false);
+        addToast("Data is not properly filled up!", {
+          appearance: 'error',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
+      });
     }
   }
 
@@ -542,12 +542,12 @@ const Admin = props => {
             <i className="fa fa-check-square-o" aria-hidden="true" onClick={selectAll} data-tip data-for="selectTip" />
             <ReactTooltip id="selectTip" place="top" effect="solid">
               Select / Deselect All
-              </ReactTooltip>
+            </ReactTooltip>
 
             <i className="fa fa-trash-o" aria-hidden="true" onClick={deleteBulk} data-tip data-for="deleteTip" />
             <ReactTooltip id="deleteTip" place="top" effect="solid">
               Deleted Selected Admins
-              </ReactTooltip>
+            </ReactTooltip>
           </span>
         </div>
 
@@ -590,7 +590,7 @@ const Admin = props => {
                 </div>
               </Fragment>
             })};
-            {showLoadBtn &&
+          {showLoadBtn &&
             <button onClick={loadmore}>Load More Admin...</button>
           }
         </div>

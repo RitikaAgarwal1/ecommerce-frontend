@@ -1,4 +1,4 @@
 {
-    "BASEURL": "https://ecomm-website-backend.herokuapp.com/",
-    "_BASEURL": "http://localhost:3000/"
+    "_BASEURL": "https://ecomm-website-backend.herokuapp.com/",
+    "BASEURL": "http://localhost:3000/"
 }
