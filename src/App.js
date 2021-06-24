@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { Fragment } from 'react';
 import Header from "./components/Layout/Header";
 import Footer from "./components/Layout/Footer";
@@ -13,7 +13,7 @@ import { ToastProvider } from 'react-toast-notifications';
 const App = () => {
   return (
     <Fragment>
-      <BrowserRouter basename='/'>
+      <HashRouter>
         <Header />
 
         <main>
@@ -23,7 +23,7 @@ const App = () => {
         </main>
 
         <Footer />
-      </BrowserRouter>
+      </HashRouter>
     </Fragment>
   )
 };
