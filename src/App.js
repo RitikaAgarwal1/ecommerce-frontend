@@ -1,5 +1,6 @@
 import React from "react";
-import {Fragment} from 'react';
+import { HashRouter } from "react-router-dom";
+import { Fragment } from 'react';
 import Header from "./components/Layout/Header";
 import Footer from "./components/Layout/Footer";
 import Router from "./Router";
@@ -12,15 +13,17 @@ import { ToastProvider } from 'react-toast-notifications';
 const App = () => {
   return (
     <Fragment>
-      <Header />
+      <HashRouter>
+        <Header />
 
-      <main>
-      <ToastProvider>
-        <Router/>
-      </ToastProvider>
-      </main>
+        <main>
+          <ToastProvider>
+            <Router />
+          </ToastProvider>
+        </main>
 
-      <Footer/>
+        <Footer />
+      </HashRouter>
     </Fragment>
   )
 };

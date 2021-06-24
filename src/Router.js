@@ -1,5 +1,5 @@
 import React from "react";
-import { Route, Switch, HashRouter as Hash } from "react-router-dom";
+import { Route, Switch, BrowserRouter as Hash } from "react-router-dom";
 import Cart from "./components/Cart/Cart";
 import Admin from "./components/Admin/Admin";
 import Password from "./components/Auth/Password";

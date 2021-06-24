@@ -96,8 +96,8 @@ const Admin = props => {
       });
       setIsLoader(false);
     } else {
-      await axios.post(`${configData.BASEURL}register`, data).then (async res => {
-        const forgotPasswordUrl = `"https://ritikaagarwal1.github.io/forgot-password/"${register.email}`;
+      // await axios.post(`${configData.BASEURL}register`, data).then (async res => {
+        const forgotPasswordUrl = `https://ritikaagarwal1.github.io/forgot-password/${register.email}`;
         const info = {
           content: `<div style="width: 100%;background:#eee;padding:1%;">
                       <div style="border: 2px solid #c2d44e;color:#646565;width: 650px;margin: auto;font-family: system-ui;">
@@ -134,15 +134,15 @@ const Admin = props => {
 
         fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
 
-      }).catch(err => {
-        console.log(err);
-        setIsLoader(false);
-        addToast("Data is not properly filled up!", {
-          appearance: 'error',
-          autoDismiss: true,
-          placement: "bottom-center"
-        });
-      });
+      // }).catch(err => {
+      //   console.log(err);
+      //   setIsLoader(false);
+      //   addToast("Data is not properly filled up!", {
+      //     appearance: 'error',
+      //     autoDismiss: true,
+      //     placement: "bottom-center"
+      //   });
+      // });
     }
   }
 
