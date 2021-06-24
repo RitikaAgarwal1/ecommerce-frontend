@@ -173,6 +173,7 @@ const Auth = props => {
             return false;
         }
         let path = `/forgot-password/${response[0].email}`;
+        console.log(path);
         history.replace(path);
     };
 

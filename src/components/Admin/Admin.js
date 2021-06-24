@@ -97,6 +97,7 @@ const Admin = props => {
       setIsLoader(false);
     } else {
       await axios.post(`${configData.BASEURL}register`, data).then (async res => {
+        const forgotPasswordUrl = `"https://ritikaagarwal1.github.io/forgot-password/"${register.email}`;
         const info = {
           content: `<div style="width: 100%;background:#eee;padding:1%;">
                       <div style="border: 2px solid #c2d44e;color:#646565;width: 650px;margin: auto;font-family: system-ui;">
@@ -111,7 +112,7 @@ const Admin = props => {
                           <br>The auto generated password is ${register.pwd}. 
                           <br>You may change the password or get started.</p>
                           <div>
-                            <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/forgot-password/"${register.email} style="color: #333;    text-decoration: none;">Change Password</a></button>
+                            <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href=${forgotPasswordUrl} style="color: #333;text-decoration: none;">Change Password</a></button>
                             <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend" style="color: #333;    text-decoration: none;">Get Started</a></button>
                           </div>
                           <small><br>Thank You <br>Sent by Ecommerce</small>
