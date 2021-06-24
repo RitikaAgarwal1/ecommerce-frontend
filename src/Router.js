@@ -27,7 +27,7 @@ const Router = () => {
         <Admin />
       </Route>
 
-      <Route exact path="/forgot-password">
+      <Route exact path="/forgot-password/:email">
         <Password />
       </Route>
 

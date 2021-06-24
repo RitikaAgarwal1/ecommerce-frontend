@@ -37,3 +37,21 @@ export const sendEmail = async (body) => {
         }
     });
 }
+
+export const updateData = async (body) => {
+    return new Promise(async(resolve, reject) => {
+        try{
+            const info = {
+                method: "put",
+                url: `${configData.BASEURL}updateByColName`,
+                data: body
+            }
+            let response = await axios(info);
+            //console.log(response);
+            resolve(response.data);
+        } catch (err){
+            console.log(err);
+            reject(err);
+        }
+    })
+}

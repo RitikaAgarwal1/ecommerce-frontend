@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import Input from "../../UI/Input";
-import { Fragment } from "react";
+import { useHistory } from "react-router-dom";
 import Modal from "../../UI/Modal";
 import classes from "./Auth.module.scss";
 import { useToasts } from 'react-toast-notifications';
@@ -14,10 +14,12 @@ const Auth = props => {
     const [isToggle, setIsToggle] = useState('Show Password');
     const [isForgot, setIsForgot] = useState(false);
     let data = new FormData();
+    const history = useHistory();
 
     const isEmpty = (value) => value.trim() === '';
     const isPhone = (value) => value.trim().length === 10;
     const isEmail = (value) => /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(value);
+    const isPasswordLength = (value) => value.trim().length > 10;
 
     const emailRef = useRef();
     const passRef = useRef();
@@ -37,7 +39,7 @@ const Auth = props => {
                 password: passRef.current.value
             }
 
-            if (isEmpty(signIn.email && signIn.password) || !isEmail(signIn.email) || isPhone(signIn.password)) {
+            if (isEmpty(signIn.email && signIn.password) || !isEmail(signIn.email) || isPasswordLength(signIn.password)) {
                 addToast("Email id or password is either empty or not valid!", {
                     appearance: 'error',
                     autoDismiss: true,
@@ -139,7 +141,7 @@ const Auth = props => {
         }
     };
 
-    const showPassword = (event) => {
+    const showPassword = () => {
         var x = document.getElementById("pass");
         if (x.type === "password") {
             x.type = "text";
@@ -150,10 +152,10 @@ const Auth = props => {
         }
     };
 
-    const forgotPass = async(event) => {
+    const forgotPass = async (event) => {
         event.preventDefault();
         const response = await getUserDetailsByKey('email', femailRef.current.value);
-        if (response.length == 0){
+        if (response.length == 0) {
             addToast("Sorry! This email id is not registered", {
                 appearance: 'error',
                 autoDismiss: true,
@@ -162,7 +164,7 @@ const Auth = props => {
             return false;
         }
         if (response[0].user_role == 'SUPERADMIN') response[0].user_role = 'ADMIN';
-        if (props.modalContent != response[0].user_role){
+        if (props.modalContent != response[0].user_role) {
             addToast("Please request from correct user role", {
                 appearance: 'error',
                 autoDismiss: true,
@@ -170,6 +172,8 @@ const Auth = props => {
             });
             return false;
         }
+        let path = `/forgot-password/${response[0].email}`;
+        history.replace(path);
     };
 
     return (
@@ -276,7 +280,7 @@ const Auth = props => {
                         <button onClick={props.onClose}>Cancel</button>
                         <button onClick={authUser} >Sign in</button>
                     </div>
-                    <small className={classes.fpwd} onClick={()=>setIsForgot(true)}>Change / Forgot Password</small>
+                    <small className={classes.fpwd} onClick={() => setIsForgot(true)}>Change / Forgot Password</small>
                 </form>
             }
 
@@ -291,7 +295,7 @@ const Auth = props => {
                         }}
                     />
                     <div className={classes.btn}>
-                        <button onClick={()=>setIsForgot(false)}>Back</button>
+                        <button onClick={() => setIsForgot(false)}>Back</button>
                         <button onClick={props.onClose}>Cancel</button>
                         <button onClick={forgotPass}>Change Password</button>
                     </div>

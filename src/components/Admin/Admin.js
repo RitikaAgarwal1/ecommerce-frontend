@@ -111,7 +111,7 @@ const Admin = props => {
                           <br>The auto generated password is ${register.pwd}. 
                           <br>You may change the password or get started.</p>
                           <div>
-                            <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/forgot-password" style="color: #333;    text-decoration: none;">Change Password</a></button>
+                            <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/forgot-password/"${register.email} style="color: #333;    text-decoration: none;">Change Password</a></button>
                             <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend" style="color: #333;    text-decoration: none;">Get Started</a></button>
                           </div>
                           <small><br>Thank You <br>Sent by Ecommerce</small>
@@ -198,7 +198,8 @@ const Admin = props => {
   //   })
   // }
 
-  const uploadBanner = async () => {
+  const uploadBanner = async (event) => {
+    event.preventDefault();
     try {
       if (banner) {
         if (isBannerAvailable) {
@@ -246,7 +247,8 @@ const Admin = props => {
     }
   }
 
-  const deleteBanner = async () => {
+  const deleteBanner = async (event) => {
+    event.preventDefault();
     try {
       setIsLoader(true);
       deleteAdBanner().then(data => {
@@ -315,7 +317,8 @@ const Admin = props => {
     }
   }
 
-  const deleteUserById = async (id) => {
+  const deleteUserById = async (event, id) => {
+    event.preventDefault();
     try {
       setIsLoader(true);
       const result = await deleteUser(id);
@@ -399,7 +402,8 @@ const Admin = props => {
     }
   }
 
-  const deleteBulk = async () => {
+  const deleteBulk = async (event) => {
+    event.preventDefault();
     try {
       window.addEventListener('load', checkAll, false);
       if (selectedData.length == 0) {
@@ -580,7 +584,7 @@ const Admin = props => {
                     <Link to={`/adminProfile/${admin.id}`}>
                       <button>Edit / Detail</button>
                     </Link>
-                    <button onClick={() => deleteUserById(admin.id)}>Delete</button>
+                    <button onClick={(event) => deleteUserById(event, admin.id)}>Delete</button>
                   </span>
                 </div>
               </Fragment>
