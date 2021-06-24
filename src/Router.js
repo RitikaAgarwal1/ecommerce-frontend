@@ -19,7 +19,7 @@ const Router = () => {
   return (
    <Route>
     <Switch>
-      <Route exact path="/ecommerce-frontend">
+      <Route exact path="/">
         <LoginSection />
       </Route>
 
