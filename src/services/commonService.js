@@ -1,12 +1,12 @@
 import configData from "../config/config.json";
 import axios from 'axios';
 
-export const filterFromData = async (tableName, value) => {
+export const filterFromData = async (tableName, key, value) => {
     return new Promise(async (resolve, reject) => {
         try {
             const info = {
                 method: "get",
-                url: `${configData.BASEURL}filterData?tableName=${tableName}&value=${value}`
+                url: `${configData.BASEURL}filterData?tableName=${tableName}&key=${key}&value=${value}`
             }
             let response = await axios(info);
             //console.log(response);

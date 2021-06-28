@@ -78,6 +78,7 @@ const Admin = props => {
     data.append("address", register.address);
     data.append("user_role", 'ADMIN');
     data.append("company_name", register.company_name);
+    data.append("is_verified", true);
     data.append("pic", register.pic);
 
     if (!register.pic) {
@@ -113,7 +114,7 @@ const Admin = props => {
                           <br>You may change the password or get started.</p>
                           <div>
                             <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href=${forgotPasswordUrl} style="color: #333;text-decoration: none;">Change Password</a></button>
-                            <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend/#/" style="color: #333;    text-decoration: none;">Get Started</a></button>
+                            <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend/#/" style="color: #333;text-decoration: none;">Get Started</a></button>
                           </div>
                           <small><br>Thank You <br>Sent by Ecommerce</small>
                         </section>
@@ -379,7 +380,7 @@ const Admin = props => {
       });
     } else {
       try {
-        let result = await filterFromData('users', event.target.value.toLowerCase());
+        let result = await filterFromData('users', 'company_name', event.target.value.toLowerCase());
         if (event.target.value !== "") {
           setAdmins(result);
         } else if (event.target.value == "") {
