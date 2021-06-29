@@ -274,7 +274,7 @@ const Admin = props => {
       });
     } catch (error) {
       console.log(error);
-      addToast(error.message, {
+      addToast(error.response.data.Error, {
         appearance: 'error',
         autoDismiss: true,
         placement: "bottom-center"
@@ -335,7 +335,7 @@ const Admin = props => {
     } catch (error) {
       console.log(error);
       setIsLoader(false);
-      addToast(error.message, {
+      addToast(error.response.data.Error, {
         appearance: 'error',
         autoDismiss: true,
         placement: "bottom-center"

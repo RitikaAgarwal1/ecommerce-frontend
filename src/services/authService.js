@@ -121,3 +121,20 @@ export const deleteUsersBySelection = async (body) => {
         }
     })
 }
+
+export const verificationEmail = async (token) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const info = {
+                method: "get",
+                url: `${configData.BASEURL}verify-email?token=${token}`
+            }
+            let response = await axios(info);
+            //console.log(response.data);
+            resolve(response.data);
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    })
+}

@@ -3,6 +3,7 @@ import { Route, Switch, BrowserRouter as Hash } from "react-router-dom";
 import Cart from "./components/Cart/Cart";
 import Admin from "./components/Admin/Admin";
 import Password from "./components/Auth/Password";
+import Verify from "./components/Auth/EmailVerify";
 import AdminDetail from "./components/Admin/AdminDetail";
 import Product from "./components/Product/Product";
 import Orders from "./components/Orders/Orders";
@@ -29,6 +30,10 @@ const Router = () => {
 
       <Route exact path="/forgot-password/:email">
         <Password />
+      </Route>
+
+      <Route exact path="/verify-email">
+        <Verify />
       </Route>
 
       <Route exact path="/products">

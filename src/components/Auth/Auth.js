@@ -5,8 +5,10 @@ import Modal from "../../UI/Modal";
 import classes from "./Auth.module.scss";
 import { useToasts } from 'react-toast-notifications';
 import { login, registration, getUserDetailsByKey } from "../../services/authService";
+import { sendEmail } from "../../services/commonService";
 import axios from 'axios';
 import configData from "../../config/config.json";
+import { titleCase } from "../../Utils/Utils";
 
 const Auth = props => {
     const { addToast } = useToasts();
@@ -31,6 +33,33 @@ const Auth = props => {
     const roleRef = useRef();
     const femailRef = useRef();
 
+    const emailVerification = async () => {
+        const info = {
+            content: `<div style="width: 100%;background:#eee;padding:1%;">
+                        <div style="border: 2px solid #c2d44e;color:#646565;width: 650px;margin: auto;font-family: system-ui;">
+                          <header style="background:#fff;">
+                            <h1 style="text-align:center;font-weight: 100;margin: 0;background:#fff;">
+                            <span style="color: #c2d44e;font-size:150%;">E</span>commerce</h1>
+                          </header>
+                          <section style="background: #c2d44e;padding:1%;">
+                            <h1 style="font-size: 28px;border-bottom: 1px solid #646565;font-weight:100;">Let's verify your email id</h1>
+                            <p style="font-size: 18px;">Hey ${titleCase(fnameRef.current.value)}, <br><br>
+                            A sign in attempt requires further verification because we did not recognize your email id ${emailRef.current.value}. To complete the sign in, please click on the button.<br>
+                            Your link is active for 48 hours. After that, you will need to resend the verification email by registering again.
+                            <div>
+                              <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend/#/verify-email
+                              " style="color: #333;text-decoration: none;">Verify email address</a></button>
+                            </div>
+                            <small><br>Thank You <br>Sent by Ecommerce</small>
+                          </section>
+                        </div>
+                      </div>`,
+            email: emailRef.current.value,
+            subject: `Please verify your device`
+          }
+          const mailResponse = await sendEmail(info);
+    };
+
     const authUser = async (event) => {
         event.preventDefault();
         if (props.modalContent !== "REGISTER") {
@@ -39,7 +68,7 @@ const Auth = props => {
                 password: passRef.current.value
             }
 
-            if (isEmpty(signIn.email && signIn.password) || !isEmail(signIn.email) || isPasswordLength(signIn.password)) {
+            if (isEmpty(signIn.email && signIn.password) || !isEmail(signIn.email) || !isPasswordLength(signIn.password)) {
                 addToast("Email id or password is either empty or not valid!", {
                     appearance: 'error',
                     autoDismiss: true,
@@ -65,9 +94,9 @@ const Auth = props => {
 
                 } catch (error) {
                     console.log(error);
-                    err = error;
+                    err = error.response.data.message;
                 }
-                addToast(err ? err.message : "You are now successfully logged in", {
+                addToast(err ? err : "You are now successfully logged in", {
                     appearance: err ? 'error' : 'success',
                     autoDismiss: true,
                     placement: "bottom-center"
@@ -93,7 +122,7 @@ const Auth = props => {
                 phone: phoneRef.current.value,
                 address: addressRef.current.value,
                 user_role: roleRef.current.value,
-                company_name: cnameRef.current ? cnameRef.current.value : ''
+                company_name: cnameRef.current ? cnameRef.current.value : 'none'
             }
 
             data.append("first_name", register.first_name);
@@ -118,8 +147,9 @@ const Auth = props => {
                     placement: "bottom-center"
                 });
             } else {
+                emailVerification();
                 await axios.post(`${configData.BASEURL}register`, data).then(res => {
-                    addToast("You are successfully registered as " + (register.user_role).toLowerCase(), {
+                    addToast("You are successfully registered as " + (register.user_role).toLowerCase()+"." + "Please check you email for further steps.", {
                         appearance: 'success',
                         autoDismiss: true,
                         placement: "bottom-center"
