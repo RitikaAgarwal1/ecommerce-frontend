@@ -95,3 +95,11 @@
     line-height: 45vh;
     height: 52vh;
 }
+
+.spinner{
+    position: absolute;
+    font-size: 50px;
+    left: 45%;
+    top: 45%;
+    color: $secondary-color;
+}

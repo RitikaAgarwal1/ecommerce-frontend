@@ -15,6 +15,7 @@ const Auth = props => {
     const [isAdmin, setIsAdmin] = useState('');
     const [isToggle, setIsToggle] = useState('Show Password');
     const [isForgot, setIsForgot] = useState(false);
+    const [isLoader, setIsLoader] = useState(false);
     let data = new FormData();
     const history = useHistory();
 
@@ -33,7 +34,7 @@ const Auth = props => {
     const roleRef = useRef();
     const femailRef = useRef();
 
-    const emailVerification = async () => {
+    const emailVerification = async (token) => {
         const info = {
             content: `<div style="width: 100%;background:#eee;padding:1%;">
                         <div style="border: 2px solid #c2d44e;color:#646565;width: 650px;margin: auto;font-family: system-ui;">
@@ -44,10 +45,9 @@ const Auth = props => {
                           <section style="background: #c2d44e;padding:1%;">
                             <h1 style="font-size: 28px;border-bottom: 1px solid #646565;font-weight:100;">Let's verify your email id</h1>
                             <p style="font-size: 18px;">Hey ${titleCase(fnameRef.current.value)}, <br><br>
-                            A sign in attempt requires further verification because we did not recognize your email id ${emailRef.current.value}. To complete the sign in, please click on the button.<br>
-                            Your link is active for 48 hours. After that, you will need to resend the verification email by registering again.
+                            A sign in attempt requires further verification because we did not recognize your email id ${emailRef.current.value}. To complete the sign in, please click on the button.
                             <div>
-                              <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend/#/verify-email
+                              <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend/#/verify-email?token=${token}
                               " style="color: #333;text-decoration: none;">Verify email address</a></button>
                             </div>
                             <small><br>Thank You <br>Sent by Ecommerce</small>
@@ -55,9 +55,9 @@ const Auth = props => {
                         </div>
                       </div>`,
             email: emailRef.current.value,
-            subject: `Please verify your device`
-          }
-          const mailResponse = await sendEmail(info);
+            subject: `Please verify your email id`
+        }
+        const mailResponse = await sendEmail(info);
     };
 
     const authUser = async (event) => {
@@ -78,7 +78,9 @@ const Auth = props => {
                 let err = "";
                 let response;
                 try {
+                    setIsLoader(true);
                     response = await login(signIn);
+                    setIsLoader(false);
                     let role = response.user.user_role == "SUPERADMIN" ? "ADMIN" : response.user.user_role;
                     if (role != props.modalContent) {
                         addToast('You are not registered as ' + props.modalContent.toLowerCase() + ' . Please signin as valid role.', {
@@ -95,6 +97,7 @@ const Auth = props => {
                 } catch (error) {
                     console.log(error);
                     err = error.response.data.message;
+                    setIsLoader(false);
                 }
                 addToast(err ? err : "You are now successfully logged in", {
                     appearance: err ? 'error' : 'success',
@@ -131,7 +134,7 @@ const Auth = props => {
             data.append("pwd", register.pwd);
             data.append("phone", register.phone);
             data.append("address", register.address);
-            data.append("user_role", 'ADMIN');
+            data.append("user_role", register.user_role);
             data.append("company_name", register.company_name);
 
             if (isEmpty(register.email && register.pwd && register.first_name && register.last_name && register.phone && register.address && register.user_role) || !isPhone(register.phone) || !isEmail(register.email)) {
@@ -147,13 +150,16 @@ const Auth = props => {
                     placement: "bottom-center"
                 });
             } else {
-                emailVerification();
+                setIsLoader(true);
                 await axios.post(`${configData.BASEURL}register`, data).then(res => {
-                    addToast("You are successfully registered as " + (register.user_role).toLowerCase()+"." + "Please check you email for further steps.", {
+                    addToast("You are successfully registered as " + (register.user_role).toLowerCase() + "." + "Please check you email for further steps.", {
                         appearance: 'success',
                         autoDismiss: true,
                         placement: "bottom-center"
                     });
+
+                    setIsLoader(false);
+                    emailVerification(res.data.data.verify_token);
 
                     setTimeout(() => {
                         props.onClose();
@@ -166,6 +172,7 @@ const Auth = props => {
                         autoDismiss: true,
                         placement: "bottom-center"
                     });
+                    setIsLoader(false);
                 });
             }
         }
@@ -215,6 +222,8 @@ const Auth = props => {
 
     return (
         <Modal>
+            {isLoader && <div className={classes.spinner}><i className="fa fa-spinner fa-pulse" aria-hidden="true" data-tip data-for="profileTip" /></div>}
+
             {props.modalContent === 'REGISTER' && !isForgot &&
                 <form className={classes.authForm}>
                     <h1>Register</h1>
@@ -339,7 +348,6 @@ const Auth = props => {
                     </div>
                 </form>
             }
-
         </Modal >
     )
 
