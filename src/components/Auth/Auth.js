@@ -47,7 +47,7 @@ const Auth = props => {
                             <p style="font-size: 18px;">Hey ${titleCase(fnameRef.current.value)}, <br><br>
                             A sign in attempt requires further verification because we did not recognize your email id ${emailRef.current.value}. To complete the sign in, please click on the button.
                             <div>
-                              <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend/#/verify-email?token=/${token}
+                              <button style="cursor: pointer;font-family: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;border: none;padding: 6px 15px;margin-right: 1%;background: #eee;color: #333;"><a href="https://ritikaagarwal1.github.io/ecommerce-frontend/#/verify-email/${token}
                               " style="color: #333;text-decoration: none;">Verify email address</a></button>
                             </div>
                             <small><br>Thank You <br>Sent by Ecommerce</small>
