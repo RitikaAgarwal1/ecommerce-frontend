@@ -32,7 +32,7 @@ const Router = () => {
         <Password />
       </Route>
 
-      <Route exact path="/verify-email">
+      <Route exact path="/verify-email/:token">
         <Verify />
       </Route>
 

@@ -11,6 +11,7 @@ const Verify = props => {
 
     useEffect(() => {
         verification();
+        console.log(token);
       }, []);
 
     const verification = async() => {
@@ -20,7 +21,8 @@ const Verify = props => {
             setIsMessage(response.Message);
             if (response.Message == 'Congratulations! Email id got verified. You may now log in.') return history.replace("/ecommerce-frontend");
         } catch (err){
-            console.log(err);
+            console.log(err.response.data.Message);
+            setIsMessage(err.response.data.Message);
         }
     };
 
