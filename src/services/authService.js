@@ -59,32 +59,6 @@ export const registration = async (body) => {
     });
 };
 
-export const getUserDetailsByKey = async (key, value, order_by, direction, limit, offset) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let info = {};
-            if (order_by == undefined && direction == undefined && limit == undefined && offset == undefined) {
-                info = {
-                    method: "get",
-                    url: `${configData.BASEURL}userDetails?field=${key}&value=${value}`
-                }
-            } else {
-                info = {
-                    method: "get",
-                    url: `${configData.BASEURL}userDetails?field=${key}&value=${value}&order_by=${order_by}&order=${direction}&limit=${limit}&offset=${offset}`
-                }
-            }
-            let response = await axios(info);
-            //console.log(response);
-            resolve(response.data);
-
-        } catch (error) {
-            console.log(error);
-            reject(error);
-        }
-    });
-}
-
 export const deleteUser = async (id) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -137,4 +111,40 @@ export const verificationEmail = async (token) => {
             reject(error);
         }
     })
+}
+
+export const usersDataByApproval = async (order, user_role, approval_status, limit, offset) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const info = {
+                method: "get",
+                url: `${configData.BASEURL}userByApproval?order=${order}&user_role=${user_role}&approval_status=${approval_status}&limit=${limit}&offset=${offset}`
+            }
+            let response = await axios(info);
+            //console.log(response);
+            resolve(response.data);
+
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+}
+
+export const filterAdmins = async (value, approval_status) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const info = {
+                method: "get",
+                url: `${configData.BASEURL}filterAdminData?value=${value}&approval_status=${approval_status}`
+            }
+            let response = await axios(info);
+            //console.log(response);
+            resolve(response.data);
+
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
 }

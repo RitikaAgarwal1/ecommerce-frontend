@@ -4,14 +4,14 @@ import classes from './Admin.module.scss';
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../../Loader/Loader";
-import { getUserDetailsByKey } from "../../services/authService";
+import { getDetailsByKey, updateData } from "../../services/commonService";
 import { getProductsBySellerid, deleteProductsBySelection } from "../../services/productService";
 import configData from "../../config/config.json";
-import {formattedDate} from "../../Utils/Utils";
+import { formattedDate } from "../../Utils/Utils";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import ReactTooltip from "react-tooltip";
-import emailjs from 'emailjs-com';
+import { titleCase } from "../../Utils/Utils";
 
 const AdminDetail = () => {
   const { addToast } = useToasts();
@@ -24,6 +24,7 @@ const AdminDetail = () => {
   let { id } = useParams();
   let data = new FormData();
   let image = "";
+  let userProfile = "";
   let selectedData = [];
 
   const titleRef = useRef();
@@ -59,9 +60,14 @@ const AdminDetail = () => {
 
   const fetchUsers = async (key, value) => {
     window.addEventListener('load', checkAll, false);
-    const result = await getUserDetailsByKey(key, value);
+    const result = await getDetailsByKey('users', key, value);
     setAdminDetail(result[0]);
     fetchProducts(result[0].uuid);
+  }
+
+  const changeImage = (e) => {
+    userProfile = e.target.files[0];
+    console.log(userProfile);
   }
 
   const changeitem = (e) => {
@@ -107,7 +113,7 @@ const AdminDetail = () => {
       });
     }
 
-    if (isEmpty(product.title || product.price || product.quantity || product.size || product.availiblity || product.color || product.offer || product.shipping_price || product.category || product.detail)) {
+    if (isEmpty(product.title || product.price || product.quantity || product.size || product.availiblity || product.color || product.offer || product.shipping_price || product.category || product.detail || product.pic)) {
       addToast("Data is not properly filled up!", {
         appearance: 'error',
         autoDismiss: true,
@@ -223,16 +229,38 @@ const AdminDetail = () => {
   }
 
   const updateDetails = async () => {
-    const updatedAdmin = {
-      email: emailRef.current.value,
-      first_name: fnameRef.current.value,
-      last_name: lnameRef.current.value,
-      address: addressRef.current.value,
-      phone: phoneRef.current.value,
-      company_name: cnameRef.current.value,
-      created_on: dateRef.current.value
+    try {
+      const info = {
+        tableName: "users",
+        obj: {
+          "email": emailRef.current.value,
+          "first_name": fnameRef.current.value,
+          "last_name": lnameRef.current.value,
+          "address": addressRef.current.value,
+          "phone": phoneRef.current.value,
+          "company_name": cnameRef.current.value,
+          "created_on": dateRef.current.value
+        },
+        key: "id",
+        value: adminDetail.id
+      }
+      setIsLoader(true);
+      const response = await updateData(info);
+      setIsLoader(false);
+      addToast("Successfully Updated", {
+        appearance: 'success',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+    } catch (error) {
+      console.log(error);
+      setIsLoader(false);
+      addToast("Sorry there is some error in updating it", {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
     }
-    console.log(updatedAdmin);
   }
 
   return (
@@ -244,11 +272,12 @@ const AdminDetail = () => {
           <button onClick={updateDetails}>Update</button>
         </span>
         <div className={classes.detailContent}>
-          <img src={`${configData.BASEURL}userImageByUuid?field=uuid&value=${adminDetail.uuid}`} width="300px" height="300px" />
+          <img src={`${configData.BASEURL}imageByid?tableName=users&field=uuid&value=${adminDetail.uuid}`} width="300px" height="300px" />
           <div className={classes.overlay}>
             <Input
               input={{
-                type: "file"
+                type: "file",
+                onChange: changeImage
               }}
             />
           </div>
@@ -429,12 +458,12 @@ const AdminDetail = () => {
           <i className="fa fa-check-square-o" aria-hidden="true" onClick={selectAll} data-tip data-for="selectTip" />
           <ReactTooltip id="selectTip" place="top" effect="solid">
             Select / Deselect All
-              </ReactTooltip>
+          </ReactTooltip>
 
           <i className="fa fa-trash-o" aria-hidden="true" onClick={deleteBulk} data-tip data-for="deleteTip" />
           <ReactTooltip id="deleteTip" place="top" effect="solid">
             Deleted Selected Products
-              </ReactTooltip>
+          </ReactTooltip>
 
           {isGrid &&
             <Fragment>
@@ -465,7 +494,7 @@ const AdminDetail = () => {
             productDetail.map((product) => {
               return <div className={classes.products} key={product.id}>
                 <Fragment>
-                  <img src={`${configData.BASEURL}productImageByid?field=id&value=${product.id}`} alt={product.title} />
+                  <img src={`${configData.BASEURL}imageByid?tableName=products&field=id&value=${product.id}`} alt={product.title} />
                   <Input
                     input={{
                       type: "checkbox",
@@ -474,7 +503,7 @@ const AdminDetail = () => {
                     }}
                   />
                   <div className={classes.productContent}>
-                    <p>{product.title}</p>
+                    <p>{titleCase(product.title)}</p>
                     <small>Rs {product.price}</small>
                     <span>
                       <button>Edit</button>
@@ -494,12 +523,12 @@ const AdminDetail = () => {
             productDetail.map((product) => {
               return <div className={classes.products} key={product.id}>
                 <Fragment>
-                  <img src={`${configData.BASEURL}productImageByid?field=id&value=${product.id}`} alt={product.title} />
+                  <img src={`${configData.BASEURL}imageByid?tableName=products&field=id&value=${product.id}`} alt={product.title} />
 
                   <div className={classes.productContent}>
                     <p className={classes.ptitle}>{product.title}</p>
                     <p>{product.detail}</p>
-                    <p>Quantity: {product.quantity}</p>
+                    <p>Quantity: <span style={{ color: product.quantity <= 5 ? 'red' : '#646565' }}>{product.quantity}</span></p>
                     <p>Offer: {product.offer}</p>
                     <p>Tags: {product.category}</p>
                     <small>Rs {product.price}</small>

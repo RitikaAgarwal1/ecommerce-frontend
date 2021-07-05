@@ -4,8 +4,8 @@ import { useHistory } from "react-router-dom";
 import Modal from "../../UI/Modal";
 import classes from "./Auth.module.scss";
 import { useToasts } from 'react-toast-notifications';
-import { login, registration, getUserDetailsByKey } from "../../services/authService";
-import { sendEmail } from "../../services/commonService";
+import { login, registration } from "../../services/authService";
+import { sendEmail, getDetailsByKey } from "../../services/commonService";
 import axios from 'axios';
 import configData from "../../config/config.json";
 import { titleCase } from "../../Utils/Utils";
@@ -137,13 +137,13 @@ const Auth = props => {
             data.append("user_role", register.user_role);
             data.append("company_name", register.company_name);
 
-            if (isEmpty(register.email && register.pwd && register.first_name && register.last_name && register.phone && register.address && register.user_role) || !isPhone(register.phone) || !isEmail(register.email)) {
+            if (isEmpty(register.email && register.pwd && register.first_name && register.last_name && register.phone && register.address && register.user_role) || !isPhone(register.phone) || !isEmail(register.email) || !isPasswordLength(register.pwd)) {
                 addToast("Data is not properly filled up!", {
                     appearance: 'error',
                     autoDismiss: true,
                     placement: "bottom-center"
                 });
-            } else if (isAdmin == 'ADMIN' && isEmpty(register.email && register.pwd && register.first_name && register.last_name && register.phone && register.address && register.user_role && register.company_name) || !isPhone(register.phone) || !isEmail(register.email)) {
+            } else if (isAdmin == 'ADMIN' && isEmpty(register.email && register.pwd && register.first_name && register.last_name && register.phone && register.address && register.user_role && register.company_name) || !isPhone(register.phone) || !isEmail(register.email) || !isPasswordLength(register.pwd)) {
                 addToast("Data is not properly filled up!", {
                     appearance: 'error',
                     autoDismiss: true,
@@ -191,7 +191,7 @@ const Auth = props => {
 
     const forgotPass = async (event) => {
         event.preventDefault();
-        const response = await getUserDetailsByKey('email', femailRef.current.value);
+        const response = await getDetailsByKey('email', femailRef.current.value);
         if (response.length == 0) {
             addToast("Sorry! This email id is not registered", {
                 appearance: 'error',

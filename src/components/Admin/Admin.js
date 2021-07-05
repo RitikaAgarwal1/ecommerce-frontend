@@ -5,13 +5,13 @@ import { Link } from "react-router-dom";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import configData from "../../config/config.json";
-import { getUserDetailsByKey, deleteUser, deleteUsersBySelection } from "../../services/authService";
+import { deleteUser, deleteUsersBySelection, usersDataByApproval, filterAdmins } from "../../services/authService";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
-import { filterFromData, sendEmail } from "../../services/commonService";
+import { sendEmail, updateData } from "../../services/commonService";
 import { CircularProgressbar } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { registration } from "../../services/authService";
-import { formattedDate, titleCase } from "../../Utils/Utils";
+import { formattedDate, titleCase, calcDays } from "../../Utils/Utils";
 import Loader from "../../Loader/Loader";
 import ReactTooltip from "react-tooltip";
 
@@ -25,10 +25,11 @@ const Admin = props => {
   const [orderByRequest, setOrder] = useState('');
   const [check, setCheck] = useState(false);
   const [showLoadBtn, setLoadBtn] = useState(true);
+  const [approvalStatus, setApprovalStatus] = useState(1);
 
   useEffect(() => {
     setOffset(0);
-    fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
+    fetchUsers('ASC', 'ADMIN', 1, 5, 0);
   }, []);
 
   let banner = "";
@@ -132,7 +133,7 @@ const Admin = props => {
           placement: "bottom-center"
         });
 
-        fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
+        fetchUsers('ASC', 'ADMIN', approvalStatus, 5, 0);
 
       }).catch(err => {
         console.log(err);
@@ -281,11 +282,11 @@ const Admin = props => {
     }
   }
 
-  const fetchUsers = async (key, value, order_by, direction, limit, offset) => {
+  const fetchUsers = async (order_by, user_role, approval_status, limit, offset) => {
     try {
-      const result = await getUserDetailsByKey(key, value, order_by, direction, limit, offset);
-      result.length < 5 ? setLoadBtn(false) : setLoadBtn(true);
       setIsLoader(true);
+      const result = await usersDataByApproval(order_by, user_role, approval_status, limit, offset);
+      result.length < 5 ? setLoadBtn(false) : setLoadBtn(true);
       setAdmins(result);
       setOffset(5);
       //console.log(result);
@@ -301,7 +302,7 @@ const Admin = props => {
     setIsLoader(true);
     let newArr = admins;
     try {
-      const result = await getUserDetailsByKey('user_role', 'ADMIN', 'company_name', orderByRequest, 5, offsetValue);
+      const result = await usersDataByApproval(orderByRequest, 'ADMIN', approvalStatus, 5, offsetValue);
       result.length < 5 ? setLoadBtn(false) : setLoadBtn(true);
       result.forEach((el) => {
         newArr.push(el);
@@ -330,7 +331,7 @@ const Admin = props => {
         autoDismiss: true,
         placement: "bottom-center"
       });
-      fetchUsers('user_role', 'ADMIN');
+      fetchUsers('ASC', 'ADMIN', approvalStatus, 5, 0);
     } catch (error) {
       console.log(error);
       setIsLoader(false);
@@ -366,7 +367,7 @@ const Admin = props => {
 
   const sortAdmins = (event) => {
     const order = event.target.value;
-    fetchUsers('user_role', 'ADMIN', 'company_name', order, 5, 0);
+    fetchUsers(order, 'ADMIN', approvalStatus, 5, 0);
     setOrder(order);
   }
 
@@ -379,11 +380,11 @@ const Admin = props => {
       });
     } else {
       try {
-        let result = await filterFromData('users', 'company_name', event.target.value.toLowerCase());
+        let result = await filterAdmins(event.target.value.toLowerCase(), approvalStatus);
         if (event.target.value !== "") {
           setAdmins(result);
         } else if (event.target.value == "") {
-          fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
+          fetchUsers('ASC', 'ADMIN', approvalStatus, 5, 0);
         }
         //console.log(result);
       } catch (err) {
@@ -421,7 +422,7 @@ const Admin = props => {
           autoDismiss: true,
           placement: "bottom-center"
         });
-        fetchUsers('user_role', 'ADMIN');
+        fetchUsers('ASC', 'ADMIN', approvalStatus, 5, 0);
       }
     } catch (err) {
       console.log(err);
@@ -442,6 +443,54 @@ const Admin = props => {
           setCheck(false);
         }
       }
+    }
+  }
+
+  const setActiveClass = (event, status) => {
+    const menus = document.querySelectorAll(".Admin_tabs__3VQ6f > span");
+    menus.forEach((el) => {
+      el.classList.remove("Admin_active__1T2IF");
+    });
+    event.target.classList.add("Admin_active__1T2IF");
+    if (status == 'PENDING') {
+      fetchUsers('ASC', 'ADMIN', 0, 5, 0);
+      setApprovalStatus(0);
+    }
+    if (status == 'APPROVED') {
+      fetchUsers('ASC', 'ADMIN', 1, 5, 0);
+      setApprovalStatus(1);
+    }
+  }
+
+  const approveAdmin = async (id) => {
+    try {
+      console.log(id);
+      const info = {
+        tableName: "users",
+        obj: {
+          "is_approved": true
+        },
+        key: "id",
+        value: id
+      }
+      setIsLoader(true);
+      const response = await updateData(info);
+      setIsLoader(false);
+      fetchUsers('ASC', 'ADMIN', 0, 5, 0);
+      addToast("Successfully approved", {
+        appearance: 'success',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+      //console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      setIsLoader(false);
+      addToast(error, {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
     }
   }
 
@@ -552,17 +601,26 @@ const Admin = props => {
         </div>
 
         <div>
-          {!admins ? <h1>No Admins</h1> :
+          {admins &&
+            <div className={classes.tabs}>
+              <span onClick={(event) => setActiveClass(event, 'APPROVED')} className={classes.active}>Approved Admins</span>
+              <span onClick={(event) => setActiveClass(event, 'PENDING')}>Pending Admins</span>
+            </div>
+          }
+
+          {admins?.length == 0 || !admins ? <h1>No Admins</h1> :
             admins.map((admin, index) => {
               return <Fragment key={admin.uuid}>
                 <div className={classes.content}>
                   <img
-                    src={`${configData.BASEURL}userImageByUuid?field=uuid&value=${admin.uuid}`}
+                    src={`${configData.BASEURL}imageByid?tableName=users&field=uuid&value=${admin.uuid}`}
                     width="10%"
                     height="10%"
                   />
                   <span>
-                    <p className={classes.title}>{admin.company_name}</p>
+                    <p className={classes.title}>{admin.company_name}
+                      {calcDays(admin.created_on) < 30 && <span className={classes.new}>New</span>}
+                    </p>
                     <p className={classes.capital}>{admin.first_name} {admin.last_name}</p>
                     <small className={classes.capital}>{admin.phone}</small>
                     <small>{admin.email}</small>
@@ -582,10 +640,19 @@ const Admin = props => {
                       <span>Select</span>
                     </div>
 
-                    <Link to={`/adminProfile/${admin.id}`}>
-                      <button>Edit / Detail</button>
-                    </Link>
-                    <button onClick={(event) => deleteUserById(event, admin.id)}>Delete</button>
+                    {approvalStatus == 1 &&
+                      <Link to={`/adminProfile/${admin.id}`}>
+                        <button>Edit / Detail</button>
+                      </Link>
+                    }
+
+                    {approvalStatus == 0 &&
+                    <Fragment>
+                      <button disabled = {admin.is_verified == 0} onClick={() => approveAdmin(admin.id)}>Approve</button>
+                      {admin.is_verified == 0 && <small>Not Verified</small>}
+                    </Fragment>
+                    }
+                    <button onClick={(event) => deleteUserById(event, admin.id)}>{approvalStatus == 0 ? 'Reject' : 'Delete'}</button>
                   </span>
                 </div>
               </Fragment>

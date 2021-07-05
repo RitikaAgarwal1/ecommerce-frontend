@@ -14,3 +14,10 @@ export const titleCase = (str) => {
         }
     );
 };
+
+export const calcDays = (date) => {
+    const diffTime = Math.abs(new Date(date) - new Date());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    //console.log(date, diffDays);
+    return diffDays;
+}

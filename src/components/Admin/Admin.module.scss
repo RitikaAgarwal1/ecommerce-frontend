@@ -58,6 +58,38 @@ form.form {
 	background: #f3f2f7;
 	padding-bottom: 2%;
 
+    h1{
+        margin: 2%;
+    }
+
+    .tabs{
+        padding: 1% 0 0 2%;
+        margin-bottom: -14px;
+
+        span.active{
+            color: #fff;
+            background: $primary-color;
+        }
+
+        span{
+            display: inline;
+            background: #fff;
+            color: $secondary-color;
+            font-variant-caps: small-caps;
+            padding: 5px 10px;
+            font-size: 14px;
+            border: 1px solid $primary-color;
+            cursor: pointer;
+            font-weight: 600;
+            border-bottom: none;
+
+            &:hover{
+                color: #fff;
+                background: $primary-color;
+            }
+        }
+    }
+
     .sortDiv{
         padding: 0 2%;
         display: flex;
@@ -140,6 +172,19 @@ form.form {
                     color: $primary-color;
                     font-size: 150%;
                 }
+
+                .new{
+                    font-size: 10px;
+                    font-weight: bold;
+                    background: $primary-color;
+                    color: #fff;
+                    padding: 5px 10px;
+                    border-radius: 10px;
+                    vertical-align: super;
+                    top: 4px;
+                    position: relative;
+                    left: 5px;
+                }
             }
 
             .capital{
@@ -151,30 +196,12 @@ form.form {
             }
 
             .btns {
-                margin-left: auto;
-                align-self: center;
-
-                .selection, .listContainer .selection{
-                    display: flex;
-                    border: 1px solid $primary-color;
-                    padding: 5px 0;
-                    font-size: 14px;
-                    justify-content: space-between;
-                    position: relative;
-
-                    span{
-                        margin: 2px 26px 0 0;
-                    }
-
-                    input[type="checkbox"]{
-                        cursor: pointer;
-                        margin-left: 5px;
-                    }
-                }
-
-                button, .listContainer button {
-                    width: 99px;
-                    justify-content: center;
+                small{
+                    color: red;
+                    text-align: center;
+                    font-size: 10px;
+                    margin-top: 10px;
+                    font-weight: bold;
                 }
             }
         }
@@ -410,28 +437,33 @@ form.form {
                     }
                 }
             }
+        }
+    }
 
-            .btns{
-                margin-left: auto;
-                align-self: center;
+    .btns{
+        margin-left: auto;
+        align-self: center;
 
-                // .selection{
-                //     display: flex;
-                //     border: 1px solid #c2d44e;
-                //     padding: 5px 0;
-                //     font-size: 14px;
-                //     justify-content: space-between;
-                //     position: relative;
-                // }
+        .selection{
+            display: flex;
+            border: 1px solid $primary-color;
+            padding: 5px 0;
+            font-size: 14px;
+            justify-content: space-between;
+            position: relative;
 
-                span{
-                    margin: 2px 26px 0 0;
-                }
-
-                // button{
-                //     width: 99px;
-                //     justify-content: center;
-                // }
+            input[type="checkbox"]{
+                cursor: pointer;
+                margin-left: 5px;
             }
+        }
+
+        span{
+            margin: 2px 26px 0 0;
+        }
+
+        button{
+            width: 99px;
+            justify-content: center;
         }
     }
