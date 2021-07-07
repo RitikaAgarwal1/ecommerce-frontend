@@ -148,3 +148,21 @@ export const filterAdmins = async (value, approval_status) => {
         }
     });
 }
+
+export const deleteUsersAndProducts = async (id) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const info = {
+                method: "delete",
+                url: `${configData.BASEURL}deleteUserWithProducts?id=${id}`
+            }
+            let response = await axios(info);
+            //console.log(response);
+            resolve(response.data);
+
+        } catch (error) {
+            console.log(error);
+            reject(error);
+        }
+    });
+}

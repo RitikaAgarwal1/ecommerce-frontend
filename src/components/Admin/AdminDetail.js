@@ -4,8 +4,8 @@ import classes from './Admin.module.scss';
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import Loader from "../../Loader/Loader";
-import { getDetailsByKey, updateData } from "../../services/commonService";
-import { getProductsBySellerid, deleteProductsBySelection } from "../../services/productService";
+import { getDetailsByKey, updateData, filterFromData } from "../../services/commonService";
+import { deleteProductsBySelection, deleteProduct } from "../../services/productService";
 import configData from "../../config/config.json";
 import { formattedDate } from "../../Utils/Utils";
 import { useToasts } from 'react-toast-notifications';
@@ -21,6 +21,9 @@ const AdminDetail = () => {
   const [productDetail, setAdminProduct] = useState([]);
   const [check, setCheck] = useState(false);
   const [isGrid, setIsGrid] = useState(true);
+  const [showLoadBtn, setLoadBtn] = useState(true);
+  const [orderBy, setOrderBy] = useState('ASC');
+  const [offsetValue, setOffset] = useState(0);
   let { id } = useParams();
   let data = new FormData();
   let image = "";
@@ -48,6 +51,7 @@ const AdminDetail = () => {
 
 
   useEffect(() => {
+    setOffset(0);
     fetchUsers('id', id);
   }, [0]);
 
@@ -62,12 +66,11 @@ const AdminDetail = () => {
     window.addEventListener('load', checkAll, false);
     const result = await getDetailsByKey('users', key, value);
     setAdminDetail(result[0]);
-    fetchProducts(result[0].uuid);
+    fetchProducts(result[0].uuid, 'ASC', 10, 0);
   }
 
   const changeImage = (e) => {
     userProfile = e.target.files[0];
-    console.log(userProfile);
   }
 
   const changeitem = (e) => {
@@ -135,7 +138,7 @@ const AdminDetail = () => {
       }).catch(err => {
         console.log(err);
         setIsLoader(false);
-        addToast("Data is not properly filled up!", {
+        addToast(err.response.data.Error, {
           appearance: 'error',
           autoDismiss: true,
           placement: "bottom-center"
@@ -144,11 +147,15 @@ const AdminDetail = () => {
     }
   }
 
-  const fetchProducts = async (id) => {
+  const fetchProducts = async (id, order, limit, offset) => {
     try {
-      const result = await getProductsBySellerid('seller_id', id);
+      setIsLoader(true);
+      setOrderBy(order);
+      const result = await getDetailsByKey('products', 'seller_id', id, 'title', order, limit, offset);
+      setOffset(10);
       setAdminProduct(result);
       setIsLoader(false);
+      return result;
     } catch (error) {
       console.log(error);
     }
@@ -207,29 +214,53 @@ const AdminDetail = () => {
   }
 
   const filterData = async (event) => {
-    // if (!admins) {
-    //   addToast("There is no data to search from", {
-    //     appearance: 'error',
-    //     autoDismiss: true,
-    //     placement: "bottom-center"
-    //   });
-    // } else {
-    //   try{
-    //     let result = await filterFromData('users', event.target.value.toLowerCase());
-    //     if (event.target.value !== ""){
-    //       setAdmins(result);
-    //     } else if (event.target.value == "") {
-    //       fetchUsers('user_role', 'ADMIN', 'company_name', 'ASC', 5, 0);
-    //     }
-    //     //console.log(result);
-    //   } catch (err){
-    //     console.log(err);
-    //   }
-    // }
+    if (!productDetail) {
+      addToast("There is no data to search from", {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+    } else {
+      try {
+        let result = await filterFromData('products', 'title', event.target.value.toLowerCase());
+        if (event.target.value !== "") {
+          setAdminProduct(result);
+        } else if (event.target.value == "") {
+          fetchProducts(adminDetail.uuid, orderBy, 10, 0);
+        }
+        //console.log(result);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
+
+  const sortProducts = (event) => {
+    const order = event.target.value;
+    setOrderBy(order);
+    fetchProducts(adminDetail.uuid, order, 10, 0);
   }
 
   const updateDetails = async () => {
     try {
+      data.append("pic", userProfile);
+      data.append("key", "id");
+      data.append("value", adminDetail.id);
+      data.append("tableName", "users");
+
+      if (!userProfile) {
+        addToast("No Image Updated", {
+          appearance: 'error',
+          autoDismiss: true,
+          placement: "bottom-center"
+        });
+      } else {
+        await axios.put(`${configData.BASEURL}updateImage`, data).then(async res => {
+          console.log(res);
+        });
+
+      }
+
       const info = {
         tableName: "users",
         obj: {
@@ -244,18 +275,72 @@ const AdminDetail = () => {
         key: "id",
         value: adminDetail.id
       }
+      const pinfo = {
+        tableName: "products",
+        obj: {
+          "brand": cnameRef.current.value
+        },
+        key: "seller_id",
+        value: adminDetail.uuid
+      }
       setIsLoader(true);
-      const response = await updateData(info);
+      await updateData(info);
+      await updateData(pinfo);
       setIsLoader(false);
       addToast("Successfully Updated", {
         appearance: 'success',
         autoDismiss: true,
         placement: "bottom-center"
       });
+      await fetchUsers('id', id);
     } catch (error) {
       console.log(error);
       setIsLoader(false);
       addToast("Sorry there is some error in updating it", {
+        appearance: 'error',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+    }
+  }
+
+  const loadmore = async () => {
+    setIsLoader(true);
+    let newArr = productDetail;
+    try {
+      const result = await fetchProducts(adminDetail.uuid, orderBy, 10, offsetValue);
+      result.length < 5 ? setLoadBtn(false) : setLoadBtn(true);
+      result.forEach((el) => {
+        newArr.push(el);
+      });
+      setAdminProduct(newArr);
+      const o = offsetValue;
+      setOffset(o + 5);
+      setIsLoader(false);
+      window.addEventListener('load', checkAll, false);
+    } catch (err) {
+      console.log(err);
+      setIsLoader(false);
+    }
+  }
+
+  const deleteProductById = async (event, id) => {
+    event.preventDefault();
+    try {
+      setIsLoader(true);
+      const result = await deleteProduct(id);
+      console.log(result);
+      setIsLoader(false);
+      addToast("Successfully deleted", {
+        appearance: 'success',
+        autoDismiss: true,
+        placement: "bottom-center"
+      });
+      await fetchProducts(adminDetail.uuid, 'ASC', 10, 0);
+    } catch (error) {
+      console.log(error);
+      setIsLoader(false);
+      addToast(error.response.data.Error, {
         appearance: 'error',
         autoDismiss: true,
         placement: "bottom-center"
@@ -268,7 +353,7 @@ const AdminDetail = () => {
       {isLoader && <Loader />}
       <div key={adminDetail.uuid} className={classes.detailContainer}>
         <span className={classes.head}>
-          <h1>{adminDetail.company_name}'s Profile</h1>
+          <h1>{titleCase(adminDetail.company_name)}'s Profile</h1>
           <button onClick={updateDetails}>Update</button>
         </span>
         <div className={classes.detailContent}>
@@ -450,7 +535,7 @@ const AdminDetail = () => {
 
         <div className={classes.icons}>
           <label>Sort By: </label>
-          <select>
+          <select onChange={sortProducts}>
             <option value="ASC">A - Z</option>
             <option value="DESC">Z - A</option>
           </select>
@@ -494,7 +579,7 @@ const AdminDetail = () => {
             productDetail.map((product) => {
               return <div className={classes.products} key={product.id}>
                 <Fragment>
-                  <img src={`${configData.BASEURL}imageByid?tableName=products&field=id&value=${product.id}`} alt={product.title} />
+                  <img src={`${configData.BASEURL}imageByid?tableName=products&field=id&value=${product.id}`} alt={titleCase(product.title)}/>
                   <Input
                     input={{
                       type: "checkbox",
@@ -507,7 +592,7 @@ const AdminDetail = () => {
                     <small>Rs {product.price}</small>
                     <span>
                       <button>Edit</button>
-                      <button>Delete</button>
+                      <button onClick={(event) => deleteProductById(event, product.id)}>Delete</button>
                     </span>
                   </div>
                 </Fragment>
@@ -523,8 +608,10 @@ const AdminDetail = () => {
             productDetail.map((product) => {
               return <div className={classes.products} key={product.id}>
                 <Fragment>
-                  <img src={`${configData.BASEURL}imageByid?tableName=products&field=id&value=${product.id}`} alt={product.title} />
-
+                  <span className={classes.imageContainer}>
+                    <img src={`${configData.BASEURL}imageByid?tableName=products&field=id&value=${product.id}`} alt={titleCase(product.title)}/>
+                  </span>
+                  
                   <div className={classes.productContent}>
                     <p className={classes.ptitle}>{product.title}</p>
                     <p>{product.detail}</p>
@@ -548,12 +635,15 @@ const AdminDetail = () => {
                     </div>
 
                     <button>Edit / Detail</button>
-                    <button>Delete</button>
+                    <button onClick={(event) => deleteProductById(event, product.id)}>Delete</button>
                   </span>
                 </Fragment>
               </div>
             })}
         </div>
+      }
+      {showLoadBtn &&
+        <button className={classes.loadmore} onClick={loadmore}>Load More Admin...</button>
       }
     </Fragment>
   )

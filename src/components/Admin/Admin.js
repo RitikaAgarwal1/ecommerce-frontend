@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import configData from "../../config/config.json";
-import { deleteUser, deleteUsersBySelection, usersDataByApproval, filterAdmins } from "../../services/authService";
+import { deleteUser, deleteUsersBySelection, usersDataByApproval, filterAdmins, deleteUsersAndProducts } from "../../services/authService";
 import { getBanner, deleteAdBanner, addBanner } from "../../services/promotionService";
 import { sendEmail, updateData } from "../../services/commonService";
 import { CircularProgressbar } from 'react-circular-progressbar';
@@ -323,7 +323,7 @@ const Admin = props => {
     event.preventDefault();
     try {
       setIsLoader(true);
-      const result = await deleteUser(id);
+      const result = await deleteUsersAndProducts(id);
       console.log(result);
       setIsLoader(false);
       addToast("Successfully deleted", {
@@ -613,7 +613,7 @@ const Admin = props => {
               return <Fragment key={admin.uuid}>
                 <div className={classes.content}>
                   <img
-                    src={`${configData.BASEURL}imageByid?tableName=users&field=uuid&value=${admin.uuid}`}
+                    src={`${configData.BASEURL}imageByid?tableName=users&field=uuid&value=${admin.uuid}`} alt={titleCase(admin.company_name)}
                     width="10%"
                     height="10%"
                   />
