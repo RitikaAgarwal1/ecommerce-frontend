@@ -652,12 +652,12 @@ const Admin = props => {
                       {admin.is_verified == 0 && <small>Not Verified</small>}
                     </Fragment>
                     }
-                    <button onClick={(event) => deleteUserById(event, admin.id)}>{approvalStatus == 0 ? 'Reject' : 'Delete'}</button>
+                    <button onClick={(event) => deleteUserById(event, admin.uuid)}>{approvalStatus == 0 ? 'Reject' : 'Delete'}</button>
                   </span>
                 </div>
               </Fragment>
             })};
-          {showLoadBtn &&
+          {showLoadBtn && admins?.length >= 5 &&
             <button onClick={loadmore}>Load More Admin...</button>
           }
         </div>

@@ -60,7 +60,12 @@ export const getDetailsByKey = async (tableName, key, value, order_by, direction
     return new Promise(async (resolve, reject) => {
         try {
             let info = {};
-            if (order_by == undefined && direction == undefined && limit == undefined && offset == undefined) {
+            if(key == undefined && value == undefined){
+                info = {
+                    method: "get",
+                    url: `${configData.BASEURL}details?tableName=${tableName}`
+                }
+            } else if (order_by == undefined && direction == undefined && limit == undefined && offset == undefined) {
                 info = {
                     method: "get",
                     url: `${configData.BASEURL}details?tableName=${tableName}&field=${key}&value=${value}`

@@ -32,6 +32,10 @@ p, ul, ::placeholder{
     @include rale_300;
 }
 
+input, textarea{
+    font-family: $primary-font;
+}
+
 // styling starts from here
 body {
 	color: $secondary-color;
@@ -67,6 +71,27 @@ body {
     footer {
         .fa {
             width: 20px;
+        }
+    }
+
+    //scrollbar
+    /* width */
+    ::-webkit-scrollbar {
+        width: 5px;
+    }
+    
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+    }
+    
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #cecece;
+        border-radius: 10px;
+        /* Handle on hover */
+        &:hover{
+            background: $secondary-color; 
         }
     }
 }

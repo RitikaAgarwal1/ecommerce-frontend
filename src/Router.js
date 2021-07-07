@@ -7,7 +7,6 @@ import Verify from "./components/Auth/EmailVerify";
 import AdminDetail from "./components/Admin/AdminDetail";
 import Product from "./components/Product/Product";
 import Orders from "./components/Orders/Orders";
-import Offers from "./components/Offers/Offers";
 import Designer from "./components/Designer/Designer";
 import Profile from "./components/Profile/Profile";
 import Wishlist from "./components/Wishlist/Wishlist";
@@ -42,10 +41,6 @@ const Router = () => {
 
       <Route exact path="/orders">
         <Orders />
-      </Route>
-
-      <Route exact path="/offers">
-        <Offers />
       </Route>
 
       <Route exact path="/personal-designer">

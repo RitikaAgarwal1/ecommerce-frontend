@@ -529,3 +529,43 @@ form.form {
     .loadmore{
         margin: 2% auto;
     }
+
+    .spinner{
+        position: absolute;
+        font-size: 50px;
+        left: 45%;
+        top: 45%;
+        color: $secondary-color;
+    }
+
+    .modalBtns{
+        display: flex;
+        width: 37%;
+        margin: auto;
+        padding: 6px 30px;
+
+        button{
+            padding: 6px 30px;
+        }
+    }
+
+    .editProduct{
+        height: 45vh;
+        overflow: auto;
+        
+        div{
+            padding: 5px 0;
+        }
+        
+        label{
+            width: 39%;
+            display: inline-flex;
+        }
+
+        input, textarea{
+            width: 60%;
+            height: 5vh;
+            border-radius: 5px;
+            border: 1px solid hsla(0,0%,50.2%,.38823529411764707);
+        }
+    }

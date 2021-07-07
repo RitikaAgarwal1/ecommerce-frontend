@@ -12,6 +12,7 @@ import { useToasts } from 'react-toast-notifications';
 import axios from 'axios';
 import ReactTooltip from "react-tooltip";
 import { titleCase } from "../../Utils/Utils";
+import EditProduct from "./EditProduct";
 
 const AdminDetail = () => {
   const { addToast } = useToasts();
@@ -24,6 +25,8 @@ const AdminDetail = () => {
   const [showLoadBtn, setLoadBtn] = useState(true);
   const [orderBy, setOrderBy] = useState('ASC');
   const [offsetValue, setOffset] = useState(0);
+  const [editIsShown, setEditIsShown] = useState(false);
+  const [modalContent, setModalContent] = useState('');
   let { id } = useParams();
   let data = new FormData();
   let image = "";
@@ -47,7 +50,6 @@ const AdminDetail = () => {
   const addressRef = useRef();
   const phoneRef = useRef();
   const cnameRef = useRef();
-  const dateRef = useRef();
 
 
   useEffect(() => {
@@ -90,7 +92,7 @@ const AdminDetail = () => {
       shipping_price: spriceRef.current.value,
       category: categoryRef.current.value,
       detail: detailRef.current.value,
-      size: sizeRef.current.value,
+      size: sizeRef.current.value.toUpperCase(),
       pic: image
     }
 
@@ -158,6 +160,7 @@ const AdminDetail = () => {
       return result;
     } catch (error) {
       console.log(error);
+      setIsLoader(false);
     }
   }
 
@@ -269,8 +272,7 @@ const AdminDetail = () => {
           "last_name": lnameRef.current.value,
           "address": addressRef.current.value,
           "phone": phoneRef.current.value,
-          "company_name": cnameRef.current.value,
-          "created_on": dateRef.current.value
+          "company_name": cnameRef.current.value
         },
         key: "id",
         value: adminDetail.id
@@ -348,8 +350,18 @@ const AdminDetail = () => {
     }
   }
 
+  const hideOnHandler = () => {
+    setEditIsShown(false);
+  };
+
+  const showOnHandler = (modalContent) => {
+    setEditIsShown(true);
+    setModalContent(modalContent);
+  };
+
   return (
     <Fragment>
+      {editIsShown && <EditProduct onClose={hideOnHandler} modalContent={modalContent}/>}
       {isLoader && <Loader />}
       <div key={adminDetail.uuid} className={classes.detailContainer}>
         <span className={classes.head}>
@@ -420,7 +432,6 @@ const AdminDetail = () => {
               input={{
                 type: "text",
                 defaultValue: formattedDate(adminDetail.created_on),
-                ref: dateRef,
                 disabled: true
               }}
             />
@@ -528,7 +539,7 @@ const AdminDetail = () => {
           label="Filter By "
           input={{
             type: "text",
-            placeholder: "Company Name",
+            placeholder: "Product Title",
             onChange: filterData
           }}
         />
@@ -575,7 +586,7 @@ const AdminDetail = () => {
       {/* grid view */}
       {isGrid &&
         <div className={classes.productDetailContainer}>
-          {productDetail.length == 0 ? <h1>No Products</h1> :
+          {productDetail?.length == 0 ? <h1>No Products</h1> :
             productDetail.map((product) => {
               return <div className={classes.products} key={product.id}>
                 <Fragment>
@@ -591,7 +602,7 @@ const AdminDetail = () => {
                     <p>{titleCase(product.title)}</p>
                     <small>Rs {product.price}</small>
                     <span>
-                      <button>Edit</button>
+                      <button onClick={() => showOnHandler(product.id)}>Edit</button>
                       <button onClick={(event) => deleteProductById(event, product.id)}>Delete</button>
                     </span>
                   </div>
@@ -615,7 +626,7 @@ const AdminDetail = () => {
                   <div className={classes.productContent}>
                     <p className={classes.ptitle}>{product.title}</p>
                     <p>{product.detail}</p>
-                    <p>Quantity: <span style={{ color: product.quantity <= 5 ? 'red' : '#646565' }}>{product.quantity}</span></p>
+                    <p>Quantity: <span style={{ color: product.quantity <= 5 ? 'red' : '#646565' }}><strong>{product.quantity}</strong></span></p>
                     <p>Offer: {product.offer}</p>
                     <p>Tags: {product.category}</p>
                     <small>Rs {product.price}</small>
@@ -634,7 +645,7 @@ const AdminDetail = () => {
                       <span>Select</span>
                     </div>
 
-                    <button>Edit / Detail</button>
+                    <button onClick={() => showOnHandler(product.id)}>Edit / Detail</button>
                     <button onClick={(event) => deleteProductById(event, product.id)}>Delete</button>
                   </span>
                 </Fragment>
@@ -642,8 +653,8 @@ const AdminDetail = () => {
             })}
         </div>
       }
-      {showLoadBtn &&
-        <button className={classes.loadmore} onClick={loadmore}>Load More Admin...</button>
+      {showLoadBtn && productDetail.length >= 10 &&
+        <button className={classes.loadmore} onClick={loadmore}>Load More Products...</button>
       }
     </Fragment>
   )

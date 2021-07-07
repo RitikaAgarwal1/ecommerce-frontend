@@ -43,7 +43,6 @@ const Header = props => {
           <ul>
             <li><NavLink activeClassName={classes.active} to="/products">Products</NavLink></li>
             <li><NavLink activeClassName={classes.active} to="/orders">My Orders</NavLink></li>
-            <li><NavLink activeClassName={classes.active} to="/offers">Offers</NavLink></li>
             <li><NavLink activeClassName={classes.active} to="/personal-designer">Personal Designer</NavLink></li>
             <li>
               <span className={classes.addon}>
