@@ -494,6 +494,10 @@ const Admin = props => {
     }
   }
 
+  const scrollTop = () => {
+    window.scrollTo(0,0);
+  }
+
   return (
     <Fragment>
       {isLoader && <Loader />}
@@ -662,6 +666,7 @@ const Admin = props => {
           }
         </div>
       </div>
+      <div onClick={scrollTop} className={classes.jumpTop}><i className="fa fa-angle-double-up" aria-hidden="true"/><small>Jump to top</small></div>
     </Fragment>
   );
 };

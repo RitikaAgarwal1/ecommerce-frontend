@@ -358,6 +358,10 @@ const AdminDetail = () => {
     setEditIsShown(true);
     setModalContent(modalContent);
   };
+  
+  const scrollTop = () => {
+    window.scrollTo(0,0);
+  }
 
   return (
     <Fragment>
@@ -501,7 +505,7 @@ const AdminDetail = () => {
           <Input
             input={{
               type: "text",
-              placeholder: "Categories separated by comma",
+              placeholder: "eg. Top",
               ref: categoryRef
             }}
           />
@@ -626,9 +630,9 @@ const AdminDetail = () => {
                   <div className={classes.productContent}>
                     <p className={classes.ptitle}>{product.title}</p>
                     <p>{product.detail}</p>
-                    <p>Quantity: <span style={{ color: product.quantity <= 5 ? 'red' : '#646565' }}><strong>{product.quantity}</strong></span></p>
-                    <p>Offer: {product.offer}</p>
-                    <p>Tags: {product.category}</p>
+                    <p><strong>Quantity:</strong> <span style={{ color: product.quantity <= 5 ? 'red' : '#646565' }}><strong>{product.quantity}</strong></span></p>
+                    <p><strong>Offer:</strong> {product.offer}</p>
+                    <p><strong>Category:</strong> {product.category}, <strong>Size:</strong> {product.size}, <strong>Color:</strong> {product.color}</p>
                     <small>Rs {product.price}</small>
                   </div>
 
@@ -656,6 +660,7 @@ const AdminDetail = () => {
       {showLoadBtn && productDetail.length >= 10 &&
         <button className={classes.loadmore} onClick={loadmore}>Load More Products...</button>
       }
+      <div onClick={scrollTop} className={classes.jumpTop}><i className="fa fa-angle-double-up" aria-hidden="true"/><small>Jump to top</small></div>
     </Fragment>
   )
 };

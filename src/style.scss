@@ -96,3 +96,19 @@ body {
     }
 }
 
+.jumpTop{
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1;
+    cursor: pointer;
+    text-align: center;
+
+    i{ 
+        font-size: 5em;
+        color: #c2d44e;
+        display: block;
+        margin-bottom: -16px;
+    }
+}
+

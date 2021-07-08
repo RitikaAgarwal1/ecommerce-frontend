@@ -1,112 +1,166 @@
 @import "../../style.scss";
 
 .productDetailContainer{
-    display: flex;
-    flex-wrap: wrap;
-    padding: 0 10px;
-    gap: 19px;
+    padding-left: 0.5%;
 
-    h1{
-        margin: 2%;
+    .loadmore{
+        margin-bottom: 2%;
     }
 
-    .offerContainer{
-        position: absolute;
-        background: #333;
-        color: #fff;
-        width: 30%;
-        height: 20%;
-        border-radius: 100%;
+    .actionBar{
         display: flex;
-        flex-direction: column;
-        justify-content: center;
-        margin: 5px;
-        top: 0;
+        justify-content: space-between;
+        padding: 0 1% 1% 0.6%;
 
-        .offer{
-            text-align: center;
-            padding: 0 10px;
+        .filterBox{
+            display: flex;
+
+            ul{
+                padding-left: 15px;
+
+                li{
+                    display: inline-block;
+                    cursor: pointer;
+                    margin: 0 15px;
+                    font-weight: bold;
+
+                    &:hover{
+                        color: $primary-color;
+                    }
+                }   
+            }
+
+            h4, ul{
+                margin: 0;
+            }
+        }
+    
+        select{
+            padding: 5px 10px;
+            outline: none;
+            border: 1px solid #c7c7c7;
+            color: $secondary-color;
         }
     }
 
-    .products{
-        height: 57vh;
-        margin-bottom:20px;
-        position: relative;
-        flex: 0 0 19%;
+    .productsContainer{
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0 10px;
+        gap: 19px;
 
-        input{
+        .new{
+            font-size: 10px;
+            font-weight: bold;
+            background: $secondary-color;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 10px;
+            vertical-align: super;
+            top: 4px;
             position: absolute;
-            cursor: pointer;
+            right: 5px;
+        }
+
+        .offerContainer{
+            position: absolute;
+            background: #333;
+            color: #fff;
+            width: 30%;
+            height: 20%;
+            border-radius: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 5px;
             top: 0;
-            left: 0;
-            width: 20px;
-            height: 20px;
-        }
-
-        img{
-            width: 100%;
-            font-size: 2em;
-            height: 53.4vh;
-            color: $primary-color;
-
-            &:after {  
-                position: absolute;
-                left: 0;
-                width: 100%;
-                height: 64.5%;
-                background-color: #fff;
-                line-height: 2;
+            box-shadow: 2px 1px 7px 0px #636161;
+    
+            .offer{
                 text-align: center;
-                content: attr(alt);
-                padding-top: 42%;
-                border: 1px solid #ccc;
+                padding: 0 10px;
             }
         }
 
-        .productContent{
-            position: absolute;
-            bottom: 5px;
-            background: #fff;
-            width: 80%;
-            left: 10%;
-            box-shadow: 1px 1px 7px 0px #ccc9c9;
-            height: 13.7vh;
-            text-align: center;
-
-            .brand{
-                display: block;
+        .products{
+            height: 57vh;
+            margin-bottom:20px;
+            position: relative;
+            flex: 0 0 18.94%;
+    
+            input{
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                width: 20px;
+                height: 20px;
             }
-
-            span{
-                display: flex;
-                margin: auto;
-                width: 69%;
-                margin-top: 5px;
-
-                button{
-                    margin: unset;
+    
+            img{
+                width: 100%;
+                font-size: 2em;
+                height: 53.4vh;
+                color: $primary-color;
+    
+                &:after {  
+                    position: absolute;
+                    left: 0;
+                    width: 100%;
+                    height: 64.5%;
+                    background-color: #fff;
+                    line-height: 2;
+                    text-align: center;
+                    content: attr(alt);
+                    padding-top: 42%;
+                    border: 1px solid #ccc;
+                }
+            }
+    
+            .productContent{
+                position: absolute;
+                bottom: 5px;
+                background: #fff;
+                width: 80%;
+                left: 10%;
+                box-shadow: 1px 1px 7px 0px #ccc9c9;
+                height: 13.7vh;
+                text-align: center;
+    
+                .brand{
+                    display: block;
+                }
+    
+                span{
+                    display: flex;
+                    margin: auto;
+                    width: 69%;
+                    margin-top: 5px;
+    
+                    button{
+                        margin: unset;
+                        
+                        &:first-child{
+                            margin: 5px 5px auto 5px;
+                            padding: 6px 24px;
+                        }
+    
+                        &:last-child{
+                            margin: 5px auto 5px 5px;
+                        }
+                    }
+                }
+    
+                p{
+                    font-size: 20px;
+                    margin: 5px;
                     
-                    &:first-child{
-                        margin: 5px 5px auto 5px;
-                        padding: 6px 24px;
+                    &::first-letter {
+                        color: $primary-color;
+                        font-size: 150%;
                     }
-
-                    &:last-child{
-                        margin: 5px auto 5px 5px;
-                    }
-                }
-            }
-
-            p{
-                font-size: 20px;
-                margin: 5px;
-                
-                &::first-letter {
-                    color: $primary-color;
-                    font-size: 150%;
                 }
             }
         }
-    }
+    }  
 }
