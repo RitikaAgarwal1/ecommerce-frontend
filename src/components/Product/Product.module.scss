@@ -7,6 +7,32 @@
         margin-bottom: 2%;
     }
 
+    .filterBar{
+        position: absolute;
+        z-index: 1;
+        background: #fff;
+        box-shadow: 2px 3px 8px 2px #c7c7c7;
+        padding: 10px 0;
+
+        .filterContent{
+            display: flex;
+            width: auto;
+            flex-direction: column;
+
+            div{
+                display: inline;
+            }
+
+            label{
+                padding: 0 5px;
+            }
+
+            button{
+                margin:0 0 10px 0.6%;
+            }
+        }
+    }
+
     .actionBar{
         display: flex;
         justify-content: space-between;
