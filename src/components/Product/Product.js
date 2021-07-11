@@ -17,16 +17,13 @@ const Product = props => {
   const [showLoadBtn, setLoadBtn] = useState(true);
   const [showFilter, setShowFilter] = useState(false);
   const [offsetValue, setOffset] = useState(0);
-  const [brand, setBrand] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [color, setColor] = useState([]);
-  const [offer, setOffer] = useState([]);
+  const [filterDataset, SetFilterDataset] = useState({});
   const [filterData, setFilterData] = useState([]);
   const [columnName, setColumnName] = useState([]);
   const [selectedData, setSelectedData] = useState([]);
 
-  const size = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
-  const price = ['Rs 500 - Rs 1000', 'Rs 1000 to Rs 2000', 'Rs 2000 to Rs 3000', 'Rs 3000 to Rs 4000'];
+  const sizeArr = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
+  const priceArr = ['Rs 500 - Rs 1000', 'Rs 1000 to Rs 2000', 'Rs 2000 to Rs 3000', 'Rs 3000 to Rs 4000'];
 
   const titleArr = [
     {
@@ -56,16 +53,8 @@ const Product = props => {
   ];
 
   useEffect(async () => {
-    await fetchProducts('y', orderBy, order, 10, 0);
-    await fetchAllProducts();
+    await fetchAllProducts(), fetchProducts('y', orderBy, order, 10, 0);
   }, [0]);
-
-  const checkAll = () => {
-    var inputs = document.querySelectorAll('.check');
-    for (var i = 0; i < inputs.length; i++) {
-      inputs[i].checked = true;
-    }
-  }
 
   const fetchProducts = async (availiblity, order_by, order, limit, offset) => {
     try {
@@ -117,7 +106,6 @@ const Product = props => {
       const o = offsetValue;
       setOffset(o + 5);
       setIsLoader(false);
-      window.addEventListener('load', checkAll, false);
     } catch (err) {
       console.log(err);
       setIsLoader(false);
@@ -130,7 +118,7 @@ const Product = props => {
 
   const filterByTitle = (value) => {
 
-    if (offer.length == 0 || category.length == 0 || color.length == 0 || brand.length == 0) {
+    if (Object.keys(filterDataset).length == 0) {
       addToast("Please re-load and re-navigate the page", {
         appearance: 'warning',
         autoDismiss: true,
@@ -139,32 +127,10 @@ const Product = props => {
       return false;
     }
 
-    switch (value.toLowerCase()) {
-      case 'color':
-        setFilterData(color);
-        break;
+    setFilterData(filterDataset[value]);
 
-      case 'category':
-        setFilterData(category);
-        break;
-
-      case 'brand':
-        setFilterData(brand);
-        break;
-
-      case 'size':
-        setFilterData(size);
-        break;
-
-      case 'offer':
-        setFilterData(offer);
-        break;
-
-      case 'price':
-        setFilterData(price);
-        break;
-    }
     setShowFilter(true);
+    return filterData;
   }
 
   const fetchAllProducts = async () => {
@@ -174,43 +140,75 @@ const Product = props => {
       brand: [],
       category: [],
       color: [],
-      offer: []
+      offer: [],
+      size: [],
+      price: []
     };
     for (let i in response) {
-      data['brand'].push({key: titleCase(response[i]['brand']), "isCheck": false});
-      data['category'].push(titleCase(response[i]['category']));
-      data['color'].push(titleCase(response[i]['color']));
+      data['brand'].push({ name: titleCase(response[i]['brand']), isChecked: false });
+      data['category'].push({ name: titleCase(response[i]['category']), isChecked: false });
+      data['color'].push({ name: titleCase(response[i]['color']), isChecked: false });
       if ((response[i]['offer'].toLowerCase() !== "na") && (response[i]['offer'].toLowerCase() !== "no offer")) {
-        data['offer'].push(titleCase(response[i]['offer']));
+        data['offer'].push({ name: titleCase(response[i]['offer']), isChecked: false });
       }
     }
 
-    setBrand([...new Set(data.brand)]);
-    setCategory([...new Set(data.category)]);
-    setColor([...new Set(data.color)]);
-    setOffer([...new Set(data.offer)]);
+    for (let i in sizeArr) {
+      data['size'].push({ name: sizeArr[i], isChecked: false });
+    }
+
+    for (let i in priceArr) {
+      data['price'].push({ name: priceArr[i], isChecked: false });
+    }
+
+    const removeDuplicates = (arr) => {
+      const jsonObject = arr.map(JSON.stringify);
+      const uniqueSet = new Set(jsonObject);
+      const uniqueArray = Array.from(uniqueSet).map(JSON.parse);
+      return uniqueArray;
+    }
+
+    data.brand = removeDuplicates(data.brand);
+    data.category = removeDuplicates(data.category);
+    data.color = removeDuplicates(data.color);
+    data.offer = removeDuplicates(data.offer);
+
+    SetFilterDataset(data);
+
   }
 
-  const selectFilterValues = async (e, data) => {
-    //console.log(size, color, offer, category, brand, price);
+  const selectFilterValues = async (e, data, i) => {
     let columnname = columnName;
 
-    if (offer.includes(data)) columnname = 'offer';
-    if (brand.includes(data)) columnname = 'brand';
-    if (category.includes(data)) columnname = 'category';
-    if (color.includes(data)) columnname = 'color';
-    if (size.includes(data)) columnname = 'size';
-    if (price.includes(data)) columnname = 'price';
+    const findName = (arr) => {
+      for (let prop of arr) {
+        if (prop.name == data.name) return prop.name;
+      }
+    }
+
+    if (findName(filterDataset.offer)) columnname = 'offer';
+    if (findName(filterDataset.brand)) columnname = 'brand';
+    if (findName(filterDataset.category)) columnname = 'category';
+    if (findName(filterDataset.color)) columnname = 'color';
+    if (findName(filterDataset.size)) columnname = 'size';
+    if (findName(filterDataset.price)) columnname = 'price';
+
+    filterDataset[columnname][i].isChecked = e.target.checked;
+
+    console.log(filterDataset[columnname]);
 
     setColumnName(columnname);
 
     if (e.target.checked) {
       if (!Object.keys(selectedData).includes(columnname)) selectedData[columnname] = [];
-      selectedData[columnname].push(data);
-    } else if (!e.target.checked){
-      const index = selectedData[columnname].indexOf(data);
+      selectedData[columnname].push(data.name);
+    } else if (!e.target.checked) {
+      const index = selectedData[columnname].indexOf(data.name);
       selectedData[columnname].splice(index, 1);
     }
+    //console.log(selectedData);
+    setFilterData(filterDataset[columnname]);
+    //console.log(e.target.checked, filterData);
   }
 
   return (
@@ -250,11 +248,11 @@ const Product = props => {
                   <Input
                     input={{
                       type: "checkbox",
-                      name: "check",
-                      onChange: (e) => selectFilterValues(e, data)
+                      checked: data.isChecked,
+                      onChange: (e) => selectFilterValues(e, data, index)
                     }}
                   />
-                  <label>{data}</label>
+                  <label>{data.name}</label>
                 </div>
               </Fragment>
             ))}</div>
