@@ -256,7 +256,7 @@ const Admin = props => {
     }
   }
 
-  const fetchUsers = async (key, value) => {
+  const fetchUsers = async (table, key, value) => {
     try {
       window.addEventListener('load', checkAll, false);
       setIsLoader(true);
@@ -264,7 +264,7 @@ const Admin = props => {
       const listArray = [];
       setShowNext(true);
       setShowPrev(false);
-      const result = await getUserDetailsByKey(key, value);
+      const result = await getUserDetailsByKey(table, key, value);
       setTotalAdmins(result);
       //console.log(result);
       const total = Math.max(Math.ceil(result.length / 5), 1);
