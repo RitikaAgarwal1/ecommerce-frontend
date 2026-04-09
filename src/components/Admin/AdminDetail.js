@@ -46,7 +46,7 @@ const AdminDetail = () => {
 
 
   useEffect(() => {
-    fetchUsers('users', 'id', id);
+    fetchUsers('id', id);
   }, [0]);
 
   const checkAll = () => {
