@@ -5,9 +5,6 @@ on:
     branches:
       - master
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -19,12 +16,15 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '16'
 
       - name: Install dependencies
         run: npm install
 
       - name: Build
+        env:
+          NODE_OPTIONS: --openssl-legacy-provider
+          CI: false
         run: npm run build
 
       - name: Deploy to GitHub Pages
