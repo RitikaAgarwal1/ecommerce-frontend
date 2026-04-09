@@ -46,7 +46,7 @@ const AdminDetail = () => {
 
 
   useEffect(() => {
-    fetchUsers('id', id);
+    fetchUsers('users', 'id', id);
   }, [0]);
 
   const checkAll = () => {
@@ -56,9 +56,9 @@ const AdminDetail = () => {
     }
   }
 
-  const fetchUsers = async (key, value) => {
+  const fetchUsers = async (table, key, value) => {
     window.addEventListener('load', checkAll, false);
-    const result = await getUserDetailsByKey(key, value);
+    const result = await getUserDetailsByKey(table, key, value);
     setAdminDetail(result[0]);
     fetchProducts(result[0].uuid);
   }
