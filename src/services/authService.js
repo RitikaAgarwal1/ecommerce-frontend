@@ -59,12 +59,12 @@ export const registration = async (body) => {
     });
 };
 
-export const getUserDetailsByKey = async (table, key, value) => {
+export const getUserDetailsByKey = async (key, value) => {
     return new Promise(async (resolve, reject) => {
         try {
             const info = {
                 method: "get",
-                url: `${configData.BASEURL}details?tableName=${table}&field=${key}&value=${value}`
+                url: `${configData.BASEURL}userdetails?field=${key}&value=${value}`
             }
             let response = await axios(info);
             //console.log(response);
