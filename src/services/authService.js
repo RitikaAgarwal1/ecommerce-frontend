@@ -64,7 +64,7 @@ export const getUserDetailsByKey = async (key, value) => {
         try {
             const info = {
                 method: "get",
-                url: `${configData.BASEURL}userDetails?field=${key}&value=${value}`
+                url: `${configData.BASEURL}details?field=${key}&value=${value}`
             }
             let response = await axios(info);
             //console.log(response);
