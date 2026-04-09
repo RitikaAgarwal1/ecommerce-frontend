@@ -56,9 +56,9 @@ const AdminDetail = () => {
     }
   }
 
-  const fetchUsers = async (table, key, value) => {
+  const fetchUsers = async (key, value) => {
     window.addEventListener('load', checkAll, false);
-    const result = await getUserDetailsByKey(table, key, value);
+    const result = await getUserDetailsByKey(key, value);
     setAdminDetail(result[0]);
     fetchProducts(result[0].uuid);
   }
