@@ -1,4 +1,4 @@
 {
-    "BASEURL": "ecommercebackend-production-1a7a.up.railway.app/",
+    "BASEURL": "https://ecommercebackend-production-1a7a.up.railway.app/",
     "_BASEURL": "http://localhost:3000/"
 }
